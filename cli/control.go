@@ -34,13 +34,6 @@ func validateCliArguments(_ *cobra.Command, _ []string) error {
 func run(_ *cobra.Command, _ []string) error {
 	initLogging(logLevelCliArgument)
 
-	if bErr := hermine.BackupBelegManagerSqLiteDatabaseFile(absolutePathOfBelegManagerSqLiteDB); bErr != nil {
-		return bErr
-	}
-
-	sqLiteDB := hermine.StartBelegManagerSQLiteDB(absolutePathOfBelegManagerSqLiteDB)
-	defer hermine.CloseDB(sqLiteDB)
-
 	filesToImport, globErr := doublestar.FilepathGlob(filesToImportGlobCliArgument)
 	if globErr != nil {
 		log.WithField("glob_pattern", filesToImportGlobCliArgument).
@@ -50,6 +43,10 @@ func run(_ *cobra.Command, _ []string) error {
 	}
 	log.WithField("glob_pattern", filesToImportGlobCliArgument).
 		Debugf("Found %d file(s) for glob pattern", len(filesToImport))
+	if len(filesToImport) == 0 {
+		log.Info("No files to import found")
+		return nil
+	}
 
 	belegManagerDirectory, err := os.Open(belegManagerDirectoryCliArgument)
 	if err != nil {
@@ -61,7 +58,12 @@ func run(_ *cobra.Command, _ []string) error {
 		}
 	}()
 
-	hermine.ProcessFiles(sqLiteDB, diEndpointCliArgument, diKeyCliArgument, belegManagerDirectory, filesToImport)
+	if bErr := hermine.BackupBelegManagerSqLiteDatabaseFile(absolutePathOfBelegManagerSqLiteDB); bErr != nil {
+		return bErr
+	}
+	sqLiteDB := hermine.StartBelegManagerSQLiteDB(absolutePathOfBelegManagerSqLiteDB)
+	defer hermine.CloseDB(sqLiteDB)
 
+	hermine.ProcessFiles(sqLiteDB, diEndpointCliArgument, diKeyCliArgument, belegManagerDirectory, filesToImport)
 	return nil
 }
