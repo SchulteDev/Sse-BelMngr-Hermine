@@ -36,6 +36,7 @@ func createBmDocBelegWithLinkedAsset(logger *log.Entry, tx *sqlx.Tx, belegManage
 	fileBaseName := filepath.Base(pathOfFileToImport)
 	newAsset, createAssetErr := createBmDocAsset(logger, tx, fileBaseName, internalFileToImportPath)
 	if createAssetErr != nil {
+		_ = removeFile(logger, internalFileToImportPath)
 		return nil, createAssetErr
 	}
 	if newAsset == nil {

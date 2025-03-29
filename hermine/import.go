@@ -8,6 +8,8 @@ import (
 	"sync"
 )
 
+var dbSemaphore = make(chan struct{}, 1)
+
 func ProcessFiles(db *sqlx.DB, diEndpoint, diKey string, belegManagerDirectory *os.File, filesToImport []string) {
 	pdds := gatherResultsFromProcessingFiles(db, diEndpoint, diKey, belegManagerDirectory, filesToImport)
 	logToCsv(belegManagerDirectory, pdds)
@@ -72,6 +74,12 @@ func importIntoBelegManager(logger *log.Entry, db *sqlx.DB, belegManagerDirector
 	if documentIsNoInvoiceErr := diDocumentIsTypeInvoice(logger, analysedDocument); documentIsNoInvoiceErr != nil {
 		return nil, documentIsNoInvoiceErr
 	}
+
+	// Block if another transaction is in progress, release 'dbSemaphore' via defer
+	dbSemaphore <- struct{}{}
+	defer func() {
+		<-dbSemaphore
+	}()
 
 	tx, beginTxErr := beginTransaction(db)
 	if beginTxErr != nil {

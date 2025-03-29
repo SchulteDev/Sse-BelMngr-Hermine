@@ -92,3 +92,13 @@ func copyFileToTargetIfTargetDoesNotExist(logger *log.Entry, filePath, targetPat
 	copyLogger.Debug("File copied successfully")
 	return nil
 }
+
+func removeFile(logger *log.Entry, filePath string) error {
+	if err := os.Remove(filePath); err != nil {
+		logger.WithError(err).Warnf("Failed to remove file %s", filePath)
+		return err
+	}
+
+	logger.Debugf("Removed file %s", filePath)
+	return nil
+}
