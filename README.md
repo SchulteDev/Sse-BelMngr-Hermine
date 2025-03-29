@@ -71,9 +71,7 @@ sequenceDiagram
 
 ### Supported File Types
 
-- **Input Files**: `jpg`, `pdf`, `png`, `tif`, `tiff`.
-- **Document Intelligence Compatible Types**: Includes additional types like `jfif`, `jp(e)g`, and
-  more.
+`jpg`, `pdf`, `png`, `tif`, `tiff`
 
 ### Advanced Features
 
