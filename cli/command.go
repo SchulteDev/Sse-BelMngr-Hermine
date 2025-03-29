@@ -80,7 +80,7 @@ func createBelegManagerFlags() error {
 			- belegManager supports jpg, tiff, bmp, png, gif, xpm, tif, pdf
 			- document intelligence supports jfif, pjp, jpg, pjepg, jepg, pdf, png, tif, tiff
 	*/
-	supportedFileTypes := []string{"jpg", "pdf", "png", "tif", "tiff"}
+	supportedFileTypes := []string{"jpg", "JPG", "pdf", "PDF", "png", "PNG", "tif", "TIF", "tiff", "TIFF"}
 	supportedFileTypesAsGlob := "*.{" + strings.Join(supportedFileTypes, ",") + "}"
 	filesToImportDefaultGlob :=
 		filepath.Join(userDocumentsDir, defaultBelegManagerImportPath, "**", supportedFileTypesAsGlob)
