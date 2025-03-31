@@ -8,22 +8,21 @@ import (
 	"sync"
 )
 
-var dbSemaphore = make(chan struct{}, 1)
-
 func ProcessFiles(db *sqlx.DB, diEndpoint, diKey string, belegManagerDirectory *os.File, filesToImport []string) {
 	pdds := gatherResultsFromProcessingFiles(db, diEndpoint, diKey, belegManagerDirectory, filesToImport)
 	logToCsv(belegManagerDirectory, pdds)
 }
 
 func gatherResultsFromProcessingFiles(db *sqlx.DB, diEndpoint, diKey string, belegManagerDirectory *os.File, filesToImport []string) []*processingDoneData {
-	results := make(chan []*processingDoneData)
+	var dbSemaphore = make(chan struct{}, 1)
 	var wg sync.WaitGroup
+	results := make(chan []*processingDoneData)
 	for _, pathOfFileToImport := range filesToImport {
 		wg.Add(1)
 
 		go func(p string) {
 			defer wg.Done()
-			results <- processFile(db, diEndpoint, diKey, belegManagerDirectory, p)
+			results <- processFile(db, dbSemaphore, diEndpoint, diKey, belegManagerDirectory, p)
 		}(pathOfFileToImport)
 	}
 	go func() {
@@ -39,7 +38,7 @@ func gatherResultsFromProcessingFiles(db *sqlx.DB, diEndpoint, diKey string, bel
 	return pdds
 }
 
-func processFile(db *sqlx.DB, diEndpoint, diKey string, belegManagerDirectory *os.File, pathOfFileToImport string) []*processingDoneData {
+func processFile(db *sqlx.DB, dbSemaphore chan struct{}, diEndpoint, diKey string, belegManagerDirectory *os.File, pathOfFileToImport string) []*processingDoneData {
 	pathOfFileToImportBaseName := filepath.Base(pathOfFileToImport)
 	fileLogger := log.
 		WithField("file_to_import_base_name", pathOfFileToImportBaseName).
@@ -57,7 +56,7 @@ func processFile(db *sqlx.DB, diEndpoint, diKey string, belegManagerDirectory *o
 		pdd := processingDoneData{pathOfFileToImport: pathOfFileToImport, doc: &documentFromAnalysis}
 		fileLogger.Debugf("%s analyzed, importing document nr %d...", pathOfFileToImportBaseName, i+1)
 
-		if beleg, importErr := importIntoBelegManager(fileLogger, db, belegManagerDirectory, pathOfFileToImport, documentFromAnalysis); importErr == nil {
+		if beleg, importErr := importIntoBelegManager(fileLogger, db, dbSemaphore, belegManagerDirectory, pathOfFileToImport, documentFromAnalysis); importErr == nil {
 			pdd.beleg = beleg
 			fileLogger.Debugf("Document nr %d from %s imported", i+1, pathOfFileToImportBaseName)
 		} else {
@@ -70,7 +69,7 @@ func processFile(db *sqlx.DB, diEndpoint, diKey string, belegManagerDirectory *o
 	return pdds
 }
 
-func importIntoBelegManager(logger *log.Entry, db *sqlx.DB, belegManagerDirectory *os.File, pathOfFileToImport string, analysedDocument diDocument) (*bmDocBeleg, error) {
+func importIntoBelegManager(logger *log.Entry, db *sqlx.DB, dbSemaphore chan struct{}, belegManagerDirectory *os.File, pathOfFileToImport string, analysedDocument diDocument) (*bmDocBeleg, error) {
 	if documentIsNoInvoiceErr := diDocumentIsTypeInvoice(logger, analysedDocument); documentIsNoInvoiceErr != nil {
 		return nil, documentIsNoInvoiceErr
 	}
