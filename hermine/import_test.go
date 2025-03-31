@@ -23,6 +23,7 @@ func Test_importIntoBelegManager(t *testing.T) {
 	t.Parallel()
 
 	// given
+	dbSemaphore := make(chan struct{}, 1)
 	testLogger, _ := newDebuggingNullLogger(t)
 	testLoggerEntry := testLogger.WithField("test", t.Name())
 
@@ -38,7 +39,7 @@ func Test_importIntoBelegManager(t *testing.T) {
 	invoiceAbsFilePath, diAr := getDiResultFixture(t)
 
 	// when
-	importedBeleg, importErrInsert := importIntoBelegManager(testLoggerEntry, database, tempDir, invoiceAbsFilePath, diAr.AnalyzeResult.Documents[0])
+	importedBeleg, importErrInsert := importIntoBelegManager(testLoggerEntry, database, dbSemaphore, tempDir, invoiceAbsFilePath, diAr.AnalyzeResult.Documents[0])
 	require.NoError(t, importErrInsert)
 
 	// then
@@ -46,7 +47,7 @@ func Test_importIntoBelegManager(t *testing.T) {
 
 	// when
 	time.Sleep(1 * time.Second)
-	reimportedBeleg, importErrUpdate := importIntoBelegManager(testLoggerEntry, database, tempDir, invoiceAbsFilePath, diAr.AnalyzeResult.Documents[0])
+	reimportedBeleg, importErrUpdate := importIntoBelegManager(testLoggerEntry, database, dbSemaphore, tempDir, invoiceAbsFilePath, diAr.AnalyzeResult.Documents[0])
 	require.NoError(t, importErrUpdate)
 
 	// then

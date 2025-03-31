@@ -14,7 +14,7 @@ func ProcessFiles(db *sqlx.DB, diEndpoint, diKey string, belegManagerDirectory *
 }
 
 func gatherResultsFromProcessingFiles(db *sqlx.DB, diEndpoint, diKey string, belegManagerDirectory *os.File, filesToImport []string) []*processingDoneData {
-	var dbSemaphore = make(chan struct{}, 1)
+	dbSemaphore := make(chan struct{}, 1)
 	var wg sync.WaitGroup
 	results := make(chan []*processingDoneData)
 	for _, pathOfFileToImport := range filesToImport {
