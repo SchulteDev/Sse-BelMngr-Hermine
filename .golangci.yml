@@ -11,6 +11,7 @@ linters:
     - nlreturn
     - noctx
     - paralleltest
+    - revive
     - testpackage
     - varnamelen
     - wrapcheck
