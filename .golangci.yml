@@ -19,7 +19,7 @@ linters:
     - wrapcheck
     - wsl
 issues:
-  exclusion:
+  exclusions:
     rules:
       - path: _test\.go
         linters:
