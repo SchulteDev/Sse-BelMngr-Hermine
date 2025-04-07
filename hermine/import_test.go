@@ -69,7 +69,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	assert.EqualValues(t, 4, *docAsset.DocType)
 	assert.EqualValues(t, 3, *docAsset.TargetDocType)
 	assert.EqualValues(t, 0, *docAsset.OcrState)
-	assert.EqualValues(t, invoiceExampleFileName, *docAsset.InternalPath)
+	assert.Equal(t, invoiceExampleFileName, *docAsset.InternalPath)
 	assert.EqualValues(t, 2, *docAsset.FileSyncState)
 	assertDefaultBmDocEntity(t, docAsset.bmDocEntity)
 
@@ -78,7 +78,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	finalBelegFile := filepath.Join(belegManagerDirectory.Name(), *docAsset.InternalPath)
 	finalBelegFileContent, readFinalBelegFileErr := os.ReadFile(finalBelegFile)
 	require.NoError(t, readFinalBelegFileErr)
-	require.Equal(t, len(originalFileContent), len(finalBelegFileContent), "The lengths of the files' contents should be equal")
+	require.Len(t, originalFileContent, len(finalBelegFileContent), "The lengths of the files' contents should be equal")
 	assert.Equal(t, originalFileContent, finalBelegFileContent, "The contents of the files should be equal")
 
 	beleg, findBelegErr := findBmDocBelegByID(logger, db, 1)
@@ -86,9 +86,9 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	require.EqualValues(t, 1, beleg.ID)
 	require.Equal(t, importedBeleg, beleg)
 	assert.NotEmpty(t, beleg.UUID)
-	assert.EqualValues(t, "MICROSOFT AND CONTONSO PARTNERSHIP PR... from CONTOSO", beleg.Name)
+	assert.Equal(t, "MICROSOFT AND CONTONSO PARTNERSHIP PR... from CONTOSO", beleg.Name)
 	assert.EqualValues(t, 3, *beleg.DocType)
-	assert.EqualValues(t, "654123", *beleg.Number)
+	assert.Equal(t, "654123", *beleg.Number)
 	assert.InEpsilon(t, 118368, *beleg.Amount, 0)
 	assert.EqualValues(t, 0, *beleg.Netto)
 	assert.InEpsilon(t, 20.0, *beleg.VAT, 0)
@@ -100,7 +100,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	require.NoError(t, findMsCategoryErr)
 	require.EqualValues(t, 11, msCategory.ID)
 	assert.NotEmpty(t, msCategory.UUID)
-	assert.EqualValues(t, "MICROSOFT", msCategory.Name)
+	assert.Equal(t, "MICROSOFT", msCategory.Name)
 	assert.EqualValues(t, 1, *msCategory.DocType)
 	assertDefaultBmDocEntity(t, msCategory.bmDocEntity)
 
@@ -108,7 +108,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	require.NoError(t, findCtsCategoryErr)
 	require.EqualValues(t, 12, ctsCategory.ID)
 	assert.NotEmpty(t, ctsCategory.UUID)
-	assert.EqualValues(t, "CONTOSO", ctsCategory.Name)
+	assert.Equal(t, "CONTOSO", ctsCategory.Name)
 	assert.EqualValues(t, 1, *ctsCategory.DocType)
 	assertDefaultBmDocEntity(t, ctsCategory.bmDocEntity)
 
@@ -116,14 +116,14 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	require.NoError(t, findDocLinksErr)
 	require.Len(t, docLinks, 3)
 	require.EqualValues(t, 1, docLinks[0].ID)
-	assert.EqualValues(t, docAsset.UUID, docLinks[0].SourceUUID)
-	assert.EqualValues(t, beleg.UUID, docLinks[0].TargetUUID)
+	assert.Equal(t, docAsset.UUID, docLinks[0].SourceUUID)
+	assert.Equal(t, beleg.UUID, docLinks[0].TargetUUID)
 	require.EqualValues(t, 2, docLinks[1].ID)
-	assert.EqualValues(t, msCategory.UUID, docLinks[1].SourceUUID)
-	assert.EqualValues(t, beleg.UUID, docLinks[1].TargetUUID)
+	assert.Equal(t, msCategory.UUID, docLinks[1].SourceUUID)
+	assert.Equal(t, beleg.UUID, docLinks[1].TargetUUID)
 	require.EqualValues(t, 3, docLinks[2].ID)
-	assert.EqualValues(t, ctsCategory.UUID, docLinks[2].SourceUUID)
-	assert.EqualValues(t, beleg.UUID, docLinks[2].TargetUUID)
+	assert.Equal(t, ctsCategory.UUID, docLinks[2].SourceUUID)
+	assert.Equal(t, beleg.UUID, docLinks[2].TargetUUID)
 
 	return beleg
 }

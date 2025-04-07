@@ -38,7 +38,8 @@ func gatherResultsFromProcessingFiles(db *sqlx.DB, diEndpoint, diKey string, bel
 	return pdds
 }
 
-func processFile(db *sqlx.DB, dbSemaphore chan struct{}, diEndpoint, diKey string, belegManagerDirectory *os.File, pathOfFileToImport string) []*processingDoneData {
+func processFile(db *sqlx.DB, dbSemaphore chan struct{}, diEndpoint, diKey string, belegManagerDirectory *os.File, rawPathOfFileToImport string) []*processingDoneData {
+	pathOfFileToImport := filepath.Clean(rawPathOfFileToImport)
 	pathOfFileToImportBaseName := filepath.Base(pathOfFileToImport)
 	fileLogger := log.
 		WithField("file_to_import_base_name", pathOfFileToImportBaseName).
