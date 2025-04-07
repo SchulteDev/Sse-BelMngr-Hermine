@@ -5,7 +5,6 @@ linters:
     - depguard
     - err113
     - exhaustruct
-    - goimports
     - lll
     - mnd
     - nilnil
