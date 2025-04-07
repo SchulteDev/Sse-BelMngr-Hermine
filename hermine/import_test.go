@@ -123,7 +123,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	assert.Equal(t, beleg.UUID, docLinks[1].TargetUUID)
 	require.EqualValues(t, 3, docLinks[2].ID)
 	assert.Equal(t, ctsCategory.UUID, docLinks[2].SourceUUID)
-	assert.EqualValues(t, beleg.UUID, docLinks[2].TargetUUID)
+	assert.Equal(t, beleg.UUID, docLinks[2].TargetUUID)
 
 	return beleg
 }
