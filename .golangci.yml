@@ -18,14 +18,12 @@ linters:
     - varnamelen
     - wrapcheck
     - wsl
-issues:
-  exclusions:
-    rules:
-      - path: _test\.go
-        linters:
-          - funlen
-      - path: cli/
-        linters:
-          - gochecknoglobals
-          - gochecknoinits
-          - forbidigo
+  exclusions.rules:
+    - path: _test\.go
+      linters:
+        - funlen
+    - path: cli/
+      linters:
+        - gochecknoglobals
+        - gochecknoinits
+        - forbidigo
