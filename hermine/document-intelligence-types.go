@@ -116,6 +116,9 @@ func (d *diDocument) createInvoiceName() string {
 	vendorName := fields["VendorName"].Content
 	vendorName = strings.ReplaceAll(vendorName, "\n", " ")
 
+	customerName := fields["CustomerName"].Content
+	customerName = strings.ReplaceAll(customerName, "\n", " ")
+
 	items := d.Fields["Items"].ValueArray
 	if items != nil && len(*items) == 1 {
 		item := (*items)[0]
@@ -124,11 +127,9 @@ func (d *diDocument) createInvoiceName() string {
 		if len(itemContent) > 40 {
 			itemContent = itemContent[:37] + "..."
 		}
-		return fmt.Sprintf("%s from %s", itemContent, vendorName)
+		return fmt.Sprintf("%s from %sto %s", itemContent, vendorName, customerName)
 	}
 
-	customerName := fields["CustomerName"].Content
-	customerName = strings.ReplaceAll(customerName, "\n", " ")
 	return fmt.Sprintf("Invoice %s from %s to %s", fields["InvoiceId"].Content, vendorName, customerName)
 }
 
