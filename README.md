@@ -182,7 +182,7 @@ INFO[09:55:23] Wrote CSV log file C:\Users\<your-user-name>\Documents\BelegManag
 - A CSV log file is generated with status and any encountered errors:
 
 ```shell
-cat ~/Documents/BelegManager-Daten/_import-log-<timestamp>.csv
+$ column -s, -t < ~/Documents/BelegManager-Daten/_import-log-<timestamp>.csv | less -#2 -N -S
 
 OriginalPath, BelegID, BelegName, BelegDate, InvoiceTotal, InvoiceTotalConfidence, VatRate
 C:\Users\<your-user-name>\Documents\BelegManager-Import\cafe1.pdf, 123, Caffè from somewhere, 2024-08-08, 12.00, 12.00, 0.84, 7.00
