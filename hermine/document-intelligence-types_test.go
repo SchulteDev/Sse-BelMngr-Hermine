@@ -108,7 +108,7 @@ func Test_diDocument_createInvoiceName(t *testing.T) {
 					},
 				},
 			},
-			expectedOutput: "Item with short description from Vendor A",
+			expectedOutput: "Item with short description from Vendor A to ",
 		},
 		{
 			name: "Single item with truncated description",
@@ -124,7 +124,7 @@ func Test_diDocument_createInvoiceName(t *testing.T) {
 					},
 				},
 			},
-			expectedOutput: "Very long description exceeding forty... from Vendor B",
+			expectedOutput: "Very long description exceeding forty... from Vendor B to ",
 		},
 		{
 			name: "Multiple items",
@@ -162,7 +162,7 @@ func Test_diDocument_createInvoiceName(t *testing.T) {
 					},
 				},
 			},
-			expectedOutput: "Single item description from ",
+			expectedOutput: "Single item description from  to ",
 		},
 		{
 			name: "Empty Items array",

@@ -86,7 +86,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	require.EqualValues(t, 1, beleg.ID)
 	require.Equal(t, importedBeleg, beleg)
 	assert.NotEmpty(t, beleg.UUID)
-	assert.Equal(t, "MICROSOFT AND CONTONSO PARTNERSHIP PR... from CONTOSO", beleg.Name)
+	assert.Equal(t, "MICROSOFT AND CONTONSO PARTNERSHIP PR... from CONTOSO to MICROSOFT", beleg.Name)
 	assert.EqualValues(t, 3, *beleg.DocType)
 	assert.Equal(t, "654123", *beleg.Number)
 	assert.InEpsilon(t, 118368, *beleg.Amount, 0)

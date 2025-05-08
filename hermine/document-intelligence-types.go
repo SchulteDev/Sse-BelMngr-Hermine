@@ -127,7 +127,7 @@ func (d *diDocument) createInvoiceName() string {
 		if len(itemContent) > 40 {
 			itemContent = itemContent[:37] + "..."
 		}
-		return fmt.Sprintf("%s from %sto %s", itemContent, vendorName, customerName)
+		return fmt.Sprintf("%s from %s to %s", itemContent, vendorName, customerName)
 	}
 
 	return fmt.Sprintf("Invoice %s from %s to %s", fields["InvoiceId"].Content, vendorName, customerName)
