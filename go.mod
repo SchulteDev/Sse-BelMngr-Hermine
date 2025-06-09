@@ -11,7 +11,7 @@ require (
 	github.com/spf13/pflag v1.0.6
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
-	modernc.org/sqlite v1.37.1
+	modernc.org/sqlite v1.38.0
 )
 
 require (
@@ -37,7 +37,7 @@ require (
 	golang.org/x/text v0.21.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/libc v1.65.7 // indirect
+	modernc.org/libc v1.65.10 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 )
