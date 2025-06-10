@@ -1,75 +1,241 @@
-# 🚀 Schulte Development | Markus Schulte
-*Cloud Solution Architect & Software Engineering Expert*
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-pink.svg)](https://conventionalcommits.org)
+[![Conventional Changelog](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-conventional--changelog-e10079.svg?style=flat)](https://github.com/conventional-changelog/conventional-changelog)
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
+[![Build](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/build.yml/badge.svg)](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/build.yml)
+[![Test](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/test.yml/badge.svg)](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/test.yml)
+[![Lint](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/lint.yml/badge.svg)](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/lint.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SchulteMarkus_Sse-BelMngr-Hermine&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SchulteMarkus_Sse-BelMngr-Hermine)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=SchulteMarkus_Sse-BelMngr-Hermine&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=SchulteMarkus_Sse-BelMngr-Hermine)
 
-![15+ Years Experience](https://img.shields.io/badge/Experience-15%2B_Years-success?style=for-the-badge)
-![Cloud Architect](https://img.shields.io/badge/Cloud-Architect-blue?style=for-the-badge)
-![Clean Code ❤️](https://img.shields.io/badge/Clean_Code-❤️-orange?style=for-the-badge)
-![Agile ❤️](https://img.shields.io/badge/Agile-❤️-blueviolet?style=for-the-badge)
-![Go](https://img.shields.io/badge/Go-Coder-00ADD8?style=for-the-badge&logo=go)
-![Java](https://img.shields.io/badge/Java-Coder-f89820?style=for-the-badge&logo=java)
+# SteuerSparErklärung BelegManger Invoice Importer "Hermine"
 
-## 👨‍💻 About Me
+**Sse-BelMngr-Hermine** is a command-line tool designed to analyze local documents using
+[Azure® AI Document Intelligence](https://azure.microsoft.com/en-us/products/ai-services/ai-document-intelligence)
+and seamlessly import the processed data into the BelegManager of
+[SteuerSparErklärung®](https://www.steuertipps.de).
 
-Hi, I'm Markus!
+```mermaid
+sequenceDiagram
+    participant User as 👤 User
+    participant Hermine as 🪄 Sse-BelMngr-Hermine 🪄
+    participant AzureAI as Azure® AI Document Intelligence
+    participant BelegManager as Sse® BelegManager
+    User ->> Hermine: Run for specific local documents
+    Hermine ->> AzureAI: Analyze documents
+    AzureAI ->> Hermine: Return analyzed data
+    Hermine ->> BelegManager: Import documents
+```
 
-I'm a highly skilled software engineer with over 15 years of experience in
-cloud development, software architecture, and technical leadership.
+---
 
-I help businesses innovate, scale, and succeed by crafting robust cloud-based solutions and
-empowering teams through training and coaching.
+# Table Of Contents
 
-> *"Crafting solutions that thrive today and tomorrow"*
+* [🚀 Key Features](#-key-features)
+  * [Supported File Types](#supported-file-types)
+  * [Advanced Features](#advanced-features)
+* [🛠️ Installation](#%EF%B8%8F-installation)
+* [🌟 Usage](#-usage)
+  * [Command-Line Quickstart](#command-line-quickstart)
+  * [Command-Line Flags](#command-line-flags)
+* [⚙️ Configuration File](#%EF%B8%8F-configuration-file)
+* [🎯 Workflow](#-workflow)
+* [📝 Examples](#-examples)
+  * [Example Run](#example-run)
+  * [Outcome](#outcome)
+* [🛡️ Error Handling](#%EF%B8%8F-error-handling)
+* [🖥️ Project Structure](#%EF%B8%8F-project-structure)
+* [📚 Dependencies](#-dependencies)
+* [📜 Disclaimer](#-disclaimer)
+* [💬 Feedback](#-feedback)
+* [🎨 Project Name Inspiration](#-project-name-inspiration)
 
-## 🛠️ Technical Expertise
+---
 
-- **Cloud Architecture & Development**
-- **Software Engineering & Clean Code**
-- **Technical Leadership & Coaching**
-- **Scalable System Design**
-- **Agile Development Methodologies**
+## 🚀 Key Features
 
-![Azure](https://img.shields.io/badge/Azure-0078D4?style=flat-square&logo=microsoftazure&logoColor=white)
-![AWS](https://img.shields.io/badge/AWS-FF9900?style=flat-square&logo=amazonaws&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white)
-![Terraform](https://img.shields.io/badge/Terraform-623CE4?style=flat-square&logo=terraform&logoColor=white)
+- **Document Analysis**  
+  Harnesses Azure AI Document Intelligence to extract information (vendor, total, VAT, etc.) from
+  PDF, JPG, PNG, TIF/TIFF documents.
 
-![Go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
-![Java](https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=java&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
+- **Smooth Import**  
+  Effortlessly imports processed documents into the BelegManager tool.
 
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)
-![Azure DevOps](https://img.shields.io/badge/Azure_DevOps-0175C2?style=flat-square&logo=azuredevops&logoColor=white)
-![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=flat-square&logo=jenkins&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
+- **Flexible Configuration**  
+  Integrates seamlessly with command-line arguments, environment variables, and configuration files.
 
-![Jira](https://img.shields.io/badge/Jira-0052CC?style=flat-square&logo=jira&logoColor=white)
-![Confluence](https://img.shields.io/badge/Confluence-172B4D?style=flat-square&logo=confluence&logoColor=white)
+- **Custom File Selection**  
+  Uses glob patterns to filter and choose only the files you need for analysis.
 
-## 🎓 Career Journey
+- **Robust Logging**  
+  Configurable logging levels—from detailed debug logs to concise summaries.
 
-- 🎓 **2004-2012**: Computer Science Diploma (M.Sc. equivalent) at University of Koblenz
-- 💻 **2008-2014**: PHP Developer to Head of Development at wer-kennt-wen.de
-- 🚀 **since 2014**: Freelance Technical Architect & Cloud Expert
+### Supported File Types
 
-## ✨ Why Work With Me
+`jpg`, `pdf`, `png`, `tif`, `tiff`
 
-- ✅ **15+ Years of Proven Experience**
-- ✅ **Proven Cloud Architect**
-- ✅ **Expert in Agile Working**
-- ✅ **Focus on Clean Architecture & Scalable Design**
-- ✅ **Dedicated to Empowering Your Team**
+### Advanced Features
 
-## 💡 Core Values
+- **Data Backup**:
+  Automatically backs up the BelegManager SQLite database before processing.
 
-I believe that only consistent **clean IT architecture and development** leads to success.
+- **Parallel File Processing**:
+  Supports concurrent processing of multiple files for efficiency.
 
-My work is guided by the principles of
-[Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html),
-with a focus on creating maintainable, scalable, and robust solutions.
+- **Error Handling**:
+  Gracefully handles missing files, invalid configurations, and failed imports.
 
-## 📫 Get In Touch
+---
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/markus-schulte)
-[![Website](https://img.shields.io/badge/Website-Schulte_Development-green?style=for-the-badge&logo=wordpress)](https://schulte-development.de)
-[![Email](https://img.shields.io/badge/Email-Contact_Me-red?style=for-the-badge&logo=gmail)](mailto:mail@schulte-development.de)
+## 🛠️ Installation
+
+1. **Prerequisites**
+    - Go (Golang) SDK 1.23 or later.
+    - An Azure Cognitive Services account with Document Intelligence enabled.
+      - `DI_KEY` and `DI_ENDPOINT` available as described on 
+        [Azure Documentation 'Use Document Intelligence models'](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/how-to-guides/use-sdk-rest-api?view=doc-intel-4.0.0&tabs=windows&pivots=programming-language-rest-api#set-your-environment-variables).
+
+2. **Install Application**
+
+```shell
+go install github.com/SchulteMarkus/sse-belmngr-hermine@latest
+```
+
+## 🌟 Usage
+
+### Command-Line Quickstart
+
+```shell
+sse-belmngr-hermine --di-key <Azure_AI_key> --di-endpoint <Azure_AI_endpoint>
+```
+
+### Command-Line Flags
+
+| Flag                             | Shorthand | Description                                                                                                                             | Required | Default Value                                                                                 |
+|----------------------------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------|----------|:----------------------------------------------------------------------------------------------|
+| `--config`                       | `-c`      | Path to the configuration file (optional).                                                                                              | No       | *None*                                                                                        |
+| `--di-key`                       |           | Azure Document Intelligence API key. Use this to authenticate against Azure services.                                                   | Yes      | *None*                                                                                        |
+| `--di-endpoint`                  |           | Azure Document Intelligence endpoint URL.                                                                                               | Yes      | *None*                                                                                        |
+| `--files-to-import-glob`         | `-f`      | Glob pattern to locate the input document files (supports wildcards). Defaults to user documents directory under `BelegManager-Import`. | No       | C:/Users/`your-user-name`/Documents/BelegManager-Import/**/*.{jpg,pdf,png,tif,tiff} |
+| `--beleg-manager-data-directory` |           | Specify the root directory for BelegManager data (default: the `Documents/BelegManager-Daten` folder in the user's home directory).     | No       | C:/Users/`your-user-name`/Documents/BelegManager-Daten                                        |
+| `--log-level`                    | `-l`      | Specify the logging level (trace, debug, info, warn, error, fatal, panic). Defaults to `info`.                                          | No       | info                                                                                          |
+
+---
+
+## ⚙️ Configuration File
+
+Optionally, you can manage settings via a configuration file (e.g., `config.yml`):
+
+```yaml
+di-key: "your-azure-ai-key"
+di-endpoint: "https://<your-endpoint>.cognitiveservices.azure.com/"
+files-to-import-glob: "C:/Users/<your-user-name>/Documents/BelegManager-Import/**/*.pdf"
+beleg-manager-data-directory: "C:/Users/<your-user-name>/Documents/BelegManager-Daten"
+log-level: "debug"
+```
+
+Then run:
+
+```shell
+sse-belmngr-hermine -c config.yaml
+```
+
+---
+
+## 🎯 Workflow
+
+1. **Analyze Documents**
+    - Scans local files using the specified `--files-to-import-glob`.
+    - Extracts invoice data (vendor, total, VAT, items) via Azure AI Document Intelligence.
+
+2. **Process Data**
+    - Validates database compatibility.
+    - Structures and readies extracted info for BelegManager.
+
+3. **Import to BelegManager**
+    - Inserts discovered information into the BelegManager database.
+    - Creates a backup of the BelegManager database before any changes.
+
+4. **Logging & Summaries**
+    - Outputs a processed file report (CSV) detailing import status for each document.
+
+---
+
+## 📝 Examples
+
+### Example Run
+
+```shell
+sse-belmngr-hermine run \
+  --files-to-import-glob "~/Documents/BelegManager-Import/**/*.pdf" \
+  --beleg-manager-data-directory "~/Documents/BelegManager-Daten" \
+  --di-key "<your-azure-ai-key>" \
+  --di-endpoint "<your-azure-ai-endpoint>" \
+
+INFO[09:55:21] New Beleg created  beleg_id=123  beleg_name="Caffè from somewhere" file_to_import_base_name="cafe1.pdf" file_to_import_full_path="C:\\Users\\<your-user-name>\\Documents\\BelegManager-Import\\cafe1.pdf"
+INFO[09:55:23] Beleg updated      beleg_id=77   beleg_name="Caffè from somewhere" file_to_import_base_name="cafe2.pdf" file_to_import_full_path="C:\\Users\\<your-user-name>\\Documents\\BelegManager-Import\\cafe2.pdf"
+INFO[09:55:23] Wrote CSV log file C:\Users\<your-user-name>\Documents\BelegManager-Daten\_import-log-20250127095523.csv 
+```
+
+### Outcome
+
+- Documents are imported and linked in BelegManager.
+- A CSV log file is generated with status and any encountered errors:
+
+```shell
+$ column -s, -t < ~/Documents/BelegManager-Daten/_import-log-<timestamp>.csv | less -#2 -N -S
+
+OriginalPath, BelegID, BelegName, BelegDate, InvoiceTotal, InvoiceTotalConfidence, VatRate
+C:\Users\<your-user-name>\Documents\BelegManager-Import\cafe1.pdf, 123, Caffè from somewhere, 2024-08-08, 12.00, 12.00, 0.84, 7.00
+C:\Users\<your-user-name>\Documents\BelegManager-Import\cafe2.pdf,  77, Caffè from somewhere, 2024-05-29, 12.00, 12.00, 0.84, 7.00
+```
+
+---
+
+## 🛡️ Error Handling
+
+- **Missing Database**: Alerts if the BelegManager database is not found.
+- **Unsupported Document**: Skips files if format mismatches or duplicates exist.
+- **Azure Failures**: Employs retries and logs any network or API issues.
+
+---
+
+## 🖥️ Project Structure
+
+- [cli](cli): Houses CLI logic such as flag handling and command execution.
+- [hermine](hermine): Contains the core functionality for document analysis and database
+  interactions.
+
+---
+
+## 📚 Dependencies
+
+This application makes use of the following key libraries/packages:
+
+- [Cobra](https://github.com/spf13/cobra) for CLI command building.
+- [Viper](https://github.com/spf13/viper) for configuration management.
+- [Logrus](https://github.com/sirupsen/logrus) for structured logging.
+- [sqlx](https://github.com/jmoiron/sqlx) for database querying.
+- [doublestar](https://github.com/bmatcuk/doublestar) for glob pattern matching.
+- [Azure® AI Document Intelligence](https://azure.microsoft.com/en-us/products/ai-services/ai-document-intelligence)
+  for document analysis.
+
+---
+
+## 📜 Disclaimer
+
+This software is currently in the test phase. No further liability is assumed. Use at your own risk.
+
+---
+
+## 💬 Feedback
+
+If you have any questions, issues, or suggestions, feel free to open an issue in
+the [GitHub Issues Section](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/issues).
+
+--- 
+
+## 🎨 Project Name Inspiration
+
+Project name "Hermine" is inspired by the resourceful and knowledgeable character
+[Hermione Granger](https://en.wikipedia.org/wiki/Hermione_Granger) from the Harry
+Potter® series.
