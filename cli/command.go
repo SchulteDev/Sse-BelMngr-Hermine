@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -37,11 +38,14 @@ var Command = &cobra.Command{
 }
 
 func init() {
+	if err := godotenv.Load(); err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, "Warning: Error loading .env file: ", err)
+	}
+
 	Command.PersistentFlags().StringVarP(&cmdConfigFile, "config", "c", "", "Config file path")
 
-	err := createApplicationFlags()
-	if err != nil {
-		panic(fmt.Errorf("not able to create flag: %w", err))
+	if err := createApplicationFlags(); err != nil {
+		panic(fmt.Errorf("not able to create application flag: %w", err))
 	}
 
 	createLoggingFlags()
