@@ -4,8 +4,8 @@
 [![Build](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/build.yml/badge.svg)](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/build.yml)
 [![Test](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/test.yml/badge.svg)](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/test.yml)
 [![Lint](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/lint.yml/badge.svg)](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/lint.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SchulteMarkus_Sse-BelMngr-Hermine&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SchulteMarkus_Sse-BelMngr-Hermine)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=SchulteMarkus_Sse-BelMngr-Hermine&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=SchulteMarkus_Sse-BelMngr-Hermine)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SchulteDev_Sse-BelMngr-Hermine&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SchulteDev_Sse-BelMngr-Hermine)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=SchulteDev_Sse-BelMngr-Hermine&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=SchulteDev_Sse-BelMngr-Hermine)
 
 # SteuerSparErklärung BelegManger Invoice Importer "Hermine"
 
