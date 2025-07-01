@@ -5,6 +5,7 @@ linters:
     - depguard
     - err113
     - exhaustruct
+    - embeddedstructfieldcheck
     - gosec
     - lll
     - mnd
@@ -17,6 +18,7 @@ linters:
     - testpackage
     - varnamelen
     - wrapcheck
+    - wsl
     - wsl_v5
   exclusions:
     rules:
