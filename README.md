@@ -1,9 +1,9 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-pink.svg)](https://conventionalcommits.org)
 [![Conventional Changelog](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-conventional--changelog-e10079.svg?style=flat)](https://github.com/conventional-changelog/conventional-changelog)
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
-[![Build](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/build.yml/badge.svg)](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/build.yml)
-[![Test](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/test.yml/badge.svg)](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/test.yml)
-[![Lint](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/lint.yml/badge.svg)](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/actions/workflows/lint.yml)
+[![Build](https://github.com/SchulteDev/Sse-BelMngr-Hermine/actions/workflows/build.yml/badge.svg)](https://github.com/SchulteDev/Sse-BelMngr-Hermine/actions/workflows/build.yml)
+[![Test](https://github.com/SchulteDev/Sse-BelMngr-Hermine/actions/workflows/test.yml/badge.svg)](https://github.com/SchulteDev/Sse-BelMngr-Hermine/actions/workflows/test.yml)
+[![Lint](https://github.com/SchulteDev/Sse-BelMngr-Hermine/actions/workflows/lint.yml/badge.svg)](https://github.com/SchulteDev/Sse-BelMngr-Hermine/actions/workflows/lint.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SchulteDev_Sse-BelMngr-Hermine&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SchulteDev_Sse-BelMngr-Hermine)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=SchulteDev_Sse-BelMngr-Hermine&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=SchulteDev_Sse-BelMngr-Hermine)
 
@@ -97,7 +97,7 @@ sequenceDiagram
 2. **Install Application**
 
 ```shell
-go install github.com/SchulteMarkus/sse-belmngr-hermine@latest
+go install github.com/SchulteDev/sse-belmngr-hermine@latest
 ```
 
 ## 🌟 Usage
@@ -230,7 +230,7 @@ This software is currently in the test phase. No further liability is assumed. U
 ## 💬 Feedback
 
 If you have any questions, issues, or suggestions, feel free to open an issue in
-the [GitHub Issues Section](https://github.com/SchulteMarkus/Sse-BelMngr-Hermine/issues).
+the [GitHub Issues Section](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues).
 
 --- 
 
