@@ -10,13 +10,14 @@ linters:
     - mnd
     - nilnil
     - nlreturn
+    - noinlineerr
     - noctx
     - paralleltest
     - revive
     - testpackage
     - varnamelen
     - wrapcheck
-    - wsl
+    - wsl_v5
   exclusions:
     rules:
       - path: _test\.go
