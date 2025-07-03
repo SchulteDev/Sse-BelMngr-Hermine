@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/SchulteMarkus/sse-belmngr-hermine/cli"
+	"github.com/SchulteDev/Sse-BelMngr-Hermine/cli"
 	"os"
 )
 

@@ -97,7 +97,7 @@ sequenceDiagram
 2. **Install Application**
 
 ```shell
-go install github.com/SchulteDev/sse-belmngr-hermine@latest
+go install github.com/SchulteDev/Sse-BelMngr-Hermine@latest
 ```
 
 ## 🌟 Usage
@@ -105,7 +105,7 @@ go install github.com/SchulteDev/sse-belmngr-hermine@latest
 ### Command-Line Quickstart
 
 ```shell
-sse-belmngr-hermine --di-key <Azure_AI_key> --di-endpoint <Azure_AI_endpoint>
+Sse-BelMngr-Hermine --di-key <Azure_AI_key> --di-endpoint <Azure_AI_endpoint>
 ```
 
 ### Command-Line Flags
@@ -135,9 +135,7 @@ log-level: "debug"
 
 Then run:
 
-```shell
-sse-belmngr-hermine -c config.yaml
-```
+    $ Sse-BelMngr-Hermine -c config.yaml
 
 ---
 
@@ -165,7 +163,7 @@ sse-belmngr-hermine -c config.yaml
 ### Example Run
 
 ```shell
-sse-belmngr-hermine run \
+Sse-BelMngr-Hermine run \
   --files-to-import-glob "~/Documents/BelegManager-Import/**/*.pdf" \
   --beleg-manager-data-directory "~/Documents/BelegManager-Daten" \
   --di-key "<your-azure-ai-key>" \

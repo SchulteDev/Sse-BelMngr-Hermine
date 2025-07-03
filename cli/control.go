@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/SchulteMarkus/sse-belmngr-hermine/hermine"
+	"github.com/SchulteDev/Sse-BelMngr-Hermine/hermine"
 	"github.com/bmatcuk/doublestar/v4"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
