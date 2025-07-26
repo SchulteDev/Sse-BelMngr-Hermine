@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.2](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.1...v0.1.2) (2025-07-26)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/bmatcuk/doublestar/v4 to v4.9.0 ([#22](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/22)) ([2e8bc7a](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/2e8bc7a84c98dd681969052f817ec330c10324b7))
+* **deps:** update module github.com/bmatcuk/doublestar/v4 to v4.9.1 ([#26](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/26)) ([8d9173e](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/8d9173e67bdea344c47a7f2231066884f88e729a))
+* **deps:** update module github.com/spf13/pflag to v1.0.7 ([#24](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/24)) ([31843bc](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/31843bc04919ab3d545a46d39d1d8577b944ba0f))
+* **deps:** update module modernc.org/sqlite to v1.38.1 ([#25](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/25)) ([abb9726](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/abb97268b8eb574ce9324c09d8511662a4ff2e67))
+
 ## [0.1.1](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.0...v0.1.1) (2025-07-03)
 
 
