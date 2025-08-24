@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.2](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.1...v0.1.2) (2025-08-24)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/bmatcuk/doublestar/v4 to v4.9.0 ([#22](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/22)) ([2e8bc7a](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/2e8bc7a84c98dd681969052f817ec330c10324b7))
+* **deps:** update module github.com/bmatcuk/doublestar/v4 to v4.9.1 ([#26](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/26)) ([8d9173e](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/8d9173e67bdea344c47a7f2231066884f88e729a))
+* **deps:** update module github.com/spf13/pflag to v1.0.7 ([#24](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/24)) ([31843bc](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/31843bc04919ab3d545a46d39d1d8577b944ba0f))
+* **deps:** update module github.com/stretchr/testify to v1.11.0 ([#29](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/29)) ([03c7495](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/03c7495d2f78a7f29f0b540cd7c7147a74b2e6eb))
+* **deps:** update module modernc.org/sqlite to v1.38.1 ([#25](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/25)) ([abb9726](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/abb97268b8eb574ce9324c09d8511662a4ff2e67))
+* **deps:** update module modernc.org/sqlite to v1.38.2 ([#27](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/27)) ([d3fb422](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/d3fb42265928b652ade21e9050bcd3a41aee5c9a))
+
 ## [0.1.1](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.0...v0.1.1) (2025-07-03)
 
 
