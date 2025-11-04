@@ -3,11 +3,11 @@ package hermine
 const bmDocRFC3339Milli = "2006-01-02T15:04:05.000Z"
 
 type sqlxSelecter interface {
-	Select(dest interface{}, query string, args ...interface{}) error
+	Select(dest any, query string, args ...any) error
 }
 
 type sqlxGetter interface {
-	Get(dest interface{}, query string, args ...interface{}) error
+	Get(dest any, query string, args ...any) error
 }
 
 type bmDocEntity struct {
