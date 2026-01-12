@@ -3,11 +3,12 @@ package hermine
 import (
 	"encoding/csv"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type processingDoneData struct {
@@ -17,12 +18,12 @@ type processingDoneData struct {
 }
 
 func (pdd processingDoneData) toCsvLogRow() []string {
-	logRow := []string{pdd.pathOfFileToImport}
-
 	belegAsCsvLog := belegToCsvLog(pdd.beleg)
-	logRow = append(logRow, belegAsCsvLog...)
-
 	docAsCsvLog := diDocumentToCsvLog(pdd.doc)
+
+	logRow := make([]string, 0, 1+len(belegAsCsvLog)+len(docAsCsvLog))
+	logRow = append(logRow, pdd.pathOfFileToImport)
+	logRow = append(logRow, belegAsCsvLog...)
 	logRow = append(logRow, docAsCsvLog...)
 
 	return logRow
