@@ -4,5 +4,25 @@
     'config:recommended',
     ':disableDependencyDashboard'
   ],
-  automerge: true
+  automerge: true,
+  // See https://docs.renovatebot.com/modules/manager/gomod
+  packageRules: [
+    {
+      // Update the Go version itself in go.mod
+      matchManagers: 'gomod',
+      matchDepNames: 'go',
+      matchDepTypes: 'golang',
+      rangeStrategy: 'bump'
+    },
+    {
+      // Enable updates for indirect dependencies
+      matchManagers: 'gomod',
+      matchDepTypes: 'indirect',
+      enabled: true
+    }
+  ],
+  postUpdateOptions: [
+    'gomodTidy',
+    'gomodUpdateImportPaths'
+  ]
 }
