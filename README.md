@@ -89,7 +89,7 @@ sequenceDiagram
 ## 🛠️ Installation
 
 1. **Prerequisites**
-    - Go (Golang) SDK 1.23 or later.
+    - Go (Golang) SDK 1.25 or later.
     - An Azure Cognitive Services account with Document Intelligence enabled.
       - `DI_KEY` and `DI_ENDPOINT` available as described on 
         [Azure Documentation 'Use Document Intelligence models'](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/how-to-guides/use-sdk-rest-api?view=doc-intel-4.0.0&tabs=windows&pivots=programming-language-rest-api#set-your-environment-variables).
