@@ -1,3 +1,4 @@
+// "Automated Dependency Updates for Go Modules" -> https://docs.renovatebot.com/modules/manager/gomod
 {
   $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   extends: [
@@ -5,20 +6,20 @@
     ':disableDependencyDashboard'
   ],
   automerge: true,
-  // See https://docs.renovatebot.com/modules/manager/gomod
   packageRules: [
     {
-      // Update the Go version itself in go.mod
       matchManagers: 'gomod',
       matchDepNames: 'go',
       matchDepTypes: 'golang',
       rangeStrategy: 'bump'
     },
     {
-      // Enable updates for indirect dependencies
       matchManagers: 'gomod',
       matchDepTypes: 'indirect',
-      enabled: true
+      enabled: false,
+      patch: {
+        enabled: true
+      }
     }
   ],
   postUpdateOptions: [
