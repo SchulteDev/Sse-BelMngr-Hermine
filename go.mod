@@ -1,6 +1,6 @@
 module github.com/SchulteDev/Sse-BelMngr-Hermine
 
-go 1.25.5
+go 1.25.6
 
 require (
 	github.com/bmatcuk/doublestar/v4 v4.9.2
