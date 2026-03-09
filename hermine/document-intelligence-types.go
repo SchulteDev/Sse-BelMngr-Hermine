@@ -2,10 +2,11 @@ package hermine
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const documentTypeInvoice = "invoice"
@@ -177,9 +178,9 @@ func (d *diDocument) getVat() *float64 {
 
 	taxDetail := (*taxDetails.ValueArray)[0]
 	taxRateObject := taxDetail.ValueObject["Rate"]
-	// vatAsStringWithPercentSign example: "19%"
+	// vatAsStringWithPercentSign example: "19%", "19 %"
 	vatAsStringWithPercentSign := taxRateObject.Content
-	vatAsStringWithoutPercentSign := strings.TrimSuffix(vatAsStringWithPercentSign, "%")
+	vatAsStringWithoutPercentSign := strings.TrimRight(strings.TrimSuffix(vatAsStringWithPercentSign, "%"), " \t")
 	vatAsStringWithoutPercentSignNormalized := strings.ReplaceAll(vatAsStringWithoutPercentSign, ",", ".")
 	vat, err := strconv.ParseFloat(vatAsStringWithoutPercentSignNormalized, 64)
 	if err != nil {
