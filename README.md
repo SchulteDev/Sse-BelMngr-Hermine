@@ -31,17 +31,17 @@ sequenceDiagram
 # Table Of Contents
 
 * [🚀 Key Features](#-key-features)
-  * [Supported File Types](#supported-file-types)
-  * [Advanced Features](#advanced-features)
+    * [Supported File Types](#supported-file-types)
+    * [Advanced Features](#advanced-features)
 * [🛠️ Installation](#%EF%B8%8F-installation)
 * [🌟 Usage](#-usage)
-  * [Command-Line Quickstart](#command-line-quickstart)
-  * [Command-Line Flags](#command-line-flags)
+    * [Command-Line Quickstart](#command-line-quickstart)
+    * [Command-Line Flags](#command-line-flags)
 * [⚙️ Configuration File](#%EF%B8%8F-configuration-file)
 * [🎯 Workflow](#-workflow)
 * [📝 Examples](#-examples)
-  * [Example Run](#example-run)
-  * [Outcome](#outcome)
+    * [Example Run](#example-run)
+    * [Outcome](#outcome)
 * [🛡️ Error Handling](#%EF%B8%8F-error-handling)
 * [🖥️ Project Structure](#%EF%B8%8F-project-structure)
 * [📚 Dependencies](#-dependencies)
@@ -91,8 +91,8 @@ sequenceDiagram
 1. **Prerequisites**
     - Go (Golang) SDK 1.25 or later.
     - An Azure Cognitive Services account with Document Intelligence enabled.
-      - `DI_KEY` and `DI_ENDPOINT` available as described on 
-        [Azure Documentation 'Use Document Intelligence models'](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/how-to-guides/use-sdk-rest-api?view=doc-intel-4.0.0&tabs=windows&pivots=programming-language-rest-api#set-your-environment-variables).
+        - `DI_KEY` and `DI_ENDPOINT` available as described on
+          [Azure Documentation 'Use Document Intelligence models'](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/how-to-guides/use-sdk-rest-api?view=doc-intel-4.0.0&tabs=windows&pivots=programming-language-rest-api#set-your-environment-variables).
 
 2. **Install Application**
 
@@ -110,14 +110,14 @@ Sse-BelMngr-Hermine --di-key <Azure_AI_key> --di-endpoint <Azure_AI_endpoint>
 
 ### Command-Line Flags
 
-| Flag                             | Shorthand | Description                                                                                                                             | Required | Default Value                                                                                 |
-|----------------------------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------|----------|:----------------------------------------------------------------------------------------------|
-| `--config`                       | `-c`      | Path to the configuration file (optional).                                                                                              | No       | *None*                                                                                        |
-| `--di-key`                       |           | Azure Document Intelligence API key. Use this to authenticate against Azure services.                                                   | Yes      | *None*                                                                                        |
-| `--di-endpoint`                  |           | Azure Document Intelligence endpoint URL.                                                                                               | Yes      | *None*                                                                                        |
+| Flag                             | Shorthand | Description                                                                                                                             | Required | Default Value                                                                       |
+|----------------------------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------|----------|:------------------------------------------------------------------------------------|
+| `--config`                       | `-c`      | Path to the configuration file (optional).                                                                                              | No       | *None*                                                                              |
+| `--di-key`                       |           | Azure Document Intelligence API key. Use this to authenticate against Azure services.                                                   | Yes      | *None*                                                                              |
+| `--di-endpoint`                  |           | Azure Document Intelligence endpoint URL.                                                                                               | Yes      | *None*                                                                              |
 | `--files-to-import-glob`         | `-f`      | Glob pattern to locate the input document files (supports wildcards). Defaults to user documents directory under `BelegManager-Import`. | No       | C:/Users/`your-user-name`/Documents/BelegManager-Import/**/*.{jpg,pdf,png,tif,tiff} |
-| `--beleg-manager-data-directory` |           | Specify the root directory for BelegManager data (default: the `Documents/BelegManager-Daten` folder in the user's home directory).     | No       | C:/Users/`your-user-name`/Documents/BelegManager-Daten                                        |
-| `--log-level`                    | `-l`      | Specify the logging level (trace, debug, info, warn, error, fatal, panic). Defaults to `info`.                                          | No       | info                                                                                          |
+| `--beleg-manager-data-directory` |           | Specify the root directory for BelegManager data (default: the `Documents/BelegManager-Daten` folder in the user's home directory).     | No       | C:/Users/`your-user-name`/Documents/BelegManager-Daten                              |
+| `--log-level`                    | `-l`      | Specify the logging level (trace, debug, info, warn, error, fatal, panic). Defaults to `info`.                                          | No       | info                                                                                |
 
 ---
 
