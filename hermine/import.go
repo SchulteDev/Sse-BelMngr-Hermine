@@ -88,16 +88,16 @@ func importIntoBelegManager(logger *log.Entry, db *sqlx.DB, dbSemaphore chan str
 	}
 	defer finishTransaction(tx)
 
-	repo := NewRepository(tx)
+	repo := newRepository(tx)
 	beleg, err := repo.createOrUpdateBeleg(logger, belegManagerDirectory, pathOfFileToImport, analysedDocument)
 	if err != nil {
 		return nil, err
 	}
 
-	if linkCustomerCategoryErr := repo.LinkCategoryToBeleg(logger, analysedDocument, "CustomerName", beleg); linkCustomerCategoryErr != nil {
+	if linkCustomerCategoryErr := repo.linkCategoryToBeleg(logger, analysedDocument, "CustomerName", beleg); linkCustomerCategoryErr != nil {
 		return nil, linkCustomerCategoryErr
 	}
-	if linkVendorCategoryErr := repo.LinkCategoryToBeleg(logger, analysedDocument, "VendorName", beleg); linkVendorCategoryErr != nil {
+	if linkVendorCategoryErr := repo.linkCategoryToBeleg(logger, analysedDocument, "VendorName", beleg); linkVendorCategoryErr != nil {
 		return nil, linkVendorCategoryErr
 	}
 

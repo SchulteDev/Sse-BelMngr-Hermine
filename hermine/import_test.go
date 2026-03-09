@@ -58,8 +58,8 @@ func Test_importIntoBelegManager(t *testing.T) {
 func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManagerDirectory *os.File, importedBeleg *bmDocBeleg, pathOfFileToImport string) *bmDocBeleg {
 	t.Helper()
 
-	repo := NewRepository(db)
-	bmDocAssets, fileInfoForAsset, findAssetErr := repo.FindAssets(logger, belegManagerDirectory, pathOfFileToImport)
+	repo := newRepository(db)
+	bmDocAssets, fileInfoForAsset, findAssetErr := repo.findAssets(logger, belegManagerDirectory, pathOfFileToImport)
 	require.NoError(t, findAssetErr)
 	require.Len(t, bmDocAssets, 1)
 	require.NotNil(t, fileInfoForAsset)
@@ -114,7 +114,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	assert.EqualValues(t, 1, *ctsCategory.DocType)
 	assertDefaultBmDocEntity(t, ctsCategory.bmDocEntity)
 
-	docLinks, findDocLinksErr := repo.FindLinkByBelegAsTarget(logger, beleg)
+	docLinks, findDocLinksErr := repo.findLinkByBelegAsTarget(logger, beleg)
 	require.NoError(t, findDocLinksErr)
 	require.Len(t, docLinks, 3)
 	foundAssetLink := false
@@ -140,7 +140,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 func assertBelegUpdate(t *testing.T, logger *log.Entry, db *sqlx.DB, belegBefore, reimportedBeleg *bmDocBeleg) {
 	t.Helper()
 
-	repo := NewRepository(db)
+	repo := newRepository(db)
 	beleg, findBelegErr := repo.findBelegByID(logger, 1)
 	require.NoError(t, findBelegErr)
 	require.EqualValues(t, 1, beleg.ID)
