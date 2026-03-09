@@ -278,7 +278,7 @@ func Test_diDocument_getGross(t *testing.T) {
 			documentFields: map[string]diDocumentField{
 				"InvoiceTotal": {ValueCurrency: &diCurrency{Amount: 123.45}},
 			},
-			expectedGross: func() *float64 { v := 123.45; return &v }(),
+			expectedGross: func() *float64 { ; return new(123.45) }(),
 		},
 		{
 			name:           "Missing InvoiceTotal field",
@@ -290,7 +290,7 @@ func Test_diDocument_getGross(t *testing.T) {
 			documentFields: map[string]diDocumentField{
 				"InvoiceTotal": {ValueCurrency: &diCurrency{Amount: 0.0}},
 			},
-			expectedGross: func() *float64 { v := 0.0; return &v }(),
+			expectedGross: func() *float64 { ; return new(0.0) }(),
 		},
 		{
 			name: "InvoiceTotal present with nil ValueCurrency",
@@ -320,7 +320,7 @@ func Test_diDocument_getGrossConfidence(t *testing.T) {
 			documentFields: map[string]diDocumentField{
 				"InvoiceTotal": {Confidence: 0.85},
 			},
-			expectedOutput: func() *float64 { v := 0.85; return &v }(),
+			expectedOutput: func() *float64 { ; return new(0.85) }(),
 		},
 		{
 			name:           "Field missing",
@@ -332,14 +332,14 @@ func Test_diDocument_getGrossConfidence(t *testing.T) {
 			documentFields: map[string]diDocumentField{
 				"InvoiceTotal": {Confidence: 0.0},
 			},
-			expectedOutput: func() *float64 { v := 0.0; return &v }(),
+			expectedOutput: func() *float64 { ; return new(0.0) }(),
 		},
 		{
 			name: "Confidence not set in field",
 			documentFields: map[string]diDocumentField{
 				"InvoiceTotal": {},
 			},
-			expectedOutput: func() *float64 { v := 0.0; return &v }(),
+			expectedOutput: func() *float64 { ; return new(0.0) }(),
 		},
 	}
 
@@ -370,7 +370,7 @@ func Test_diDocument_getVat(t *testing.T) {
 					},
 				},
 			},
-			expectedVat: func() *float64 { v := 10.0; return &v }(),
+			expectedVat: func() *float64 { ; return new(10.0) }(),
 		},
 		{
 			name: "Invalid VAT field format",
