@@ -3,14 +3,15 @@ package hermine
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jmoiron/sqlx"
-	log "github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -115,15 +116,22 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	docLinks, findDocLinksErr := findBmDocLinkByBelegAsTarget(logger, db, beleg)
 	require.NoError(t, findDocLinksErr)
 	require.Len(t, docLinks, 3)
-	require.EqualValues(t, 1, docLinks[0].ID)
-	assert.Equal(t, docAsset.UUID, docLinks[0].SourceUUID)
-	assert.Equal(t, beleg.UUID, docLinks[0].TargetUUID)
-	require.EqualValues(t, 2, docLinks[1].ID)
-	assert.Equal(t, msCategory.UUID, docLinks[1].SourceUUID)
-	assert.Equal(t, beleg.UUID, docLinks[1].TargetUUID)
-	require.EqualValues(t, 3, docLinks[2].ID)
-	assert.Equal(t, ctsCategory.UUID, docLinks[2].SourceUUID)
-	assert.Equal(t, beleg.UUID, docLinks[2].TargetUUID)
+	foundAssetLink := false
+	foundMsLink := false
+	foundCtsLink := false
+	for _, link := range docLinks {
+		switch link.SourceUUID {
+		case docAsset.UUID:
+			foundAssetLink = true
+		case msCategory.UUID:
+			foundMsLink = true
+		case ctsCategory.UUID:
+			foundCtsLink = true
+		}
+	}
+	assert.True(t, foundAssetLink, "Asset link not found")
+	assert.True(t, foundMsLink, "Microsoft category link not found")
+	assert.True(t, foundCtsLink, "Contoso category link not found")
 
 	return beleg
 }

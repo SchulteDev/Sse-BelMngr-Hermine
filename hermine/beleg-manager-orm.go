@@ -158,6 +158,16 @@ func findBmDocBelegByAsset(logger *log.Entry, tx *sqlx.Tx, asset *bmDocAsset) (*
 }
 
 func createIgnoreBmDocLink(logger *log.Entry, tx *sqlx.Tx, sourceUUID, targetUUID string) error {
+	result := make([]*bmDocLink, 0)
+	selectQuery := "SELECT * FROM BmDoc_LinkTable WHERE sourceUuid = ? AND targetUuid = ?"
+	if err := tx.Select(&result, selectQuery, sourceUUID, targetUUID); err != nil {
+		logger.WithError(err).Warnf("Error when searching BmDoc_LinkTable for source %s and target %s", sourceUUID, targetUUID)
+		return err
+	}
+	if len(result) > 0 {
+		return nil
+	}
+
 	if _, err := tx.Exec(insertOrIgnoreBmDocLinkTableQuery, sourceUUID, targetUUID); err != nil {
 		logger.WithError(err).Warnf("Error when linking %s and %s as BmDoc_LinkTable", sourceUUID, targetUUID)
 		return err

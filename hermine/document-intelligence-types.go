@@ -94,13 +94,16 @@ func (d *diAnalysisStatus) isStatusSucceeded() bool {
 
 func (d *diDocument) createComment() string {
 	items := d.Fields["Items"].ValueArray
-	names := make([]string, len(*items))
-	for n, item := range *items {
-		itemDescription := item.ValueObject["Description"].Content
-		itemContent := strings.ReplaceAll(itemDescription, "\n", " ")
-		names[n] = "- " + itemContent
+	itemNamesTextBlock := ""
+	if items != nil {
+		names := make([]string, len(*items))
+		for n, item := range *items {
+			itemDescription := item.ValueObject["Description"].Content
+			itemContent := strings.ReplaceAll(itemDescription, "\n", " ")
+			names[n] = "- " + itemContent
+		}
+		itemNamesTextBlock = strings.Join(names, "\n")
 	}
-	itemNamesTextBlock := strings.Join(names, "\n")
 
 	confidenceText := "-"
 	if grossConfidence := d.getGrossConfidence(); grossConfidence != nil {
@@ -143,7 +146,7 @@ func (d *diDocument) getContentFieldCommaSeperated(fieldName string) string {
 
 func (d *diDocument) getGross() *float64 {
 	fields := d.Fields
-	if field, exists := fields["InvoiceTotal"]; exists {
+	if field, exists := fields["InvoiceTotal"]; exists && field.ValueCurrency != nil {
 		return &field.ValueCurrency.Amount
 	}
 
@@ -163,7 +166,7 @@ func (d *diDocument) getGrossConfidence() *float64 {
 
 func (d *diDocument) getVat() *float64 {
 	taxDetails, taxDetailsExists := d.Fields["TaxDetails"]
-	if !taxDetailsExists {
+	if !taxDetailsExists || taxDetails.ValueArray == nil {
 		return nil
 	}
 

@@ -78,6 +78,12 @@ func Test_diDocument_createComment(t *testing.T) {
 			confidence:     0.0,
 			expectedOutput: "- Item without confidence\n\nInvoiceTotal confidence: -",
 		},
+		{
+			name:           "Missing Items field",
+			documentFields: map[string]diDocumentField{},
+			confidence:     0.95,
+			expectedOutput: "\n\nInvoiceTotal confidence: -",
+		},
 	}
 
 	for _, tt := range tests {
@@ -183,6 +189,15 @@ func Test_diDocument_createInvoiceName(t *testing.T) {
 			},
 			expectedOutput: "Invoice INV99999 from Vendor E to Customer Z",
 		},
+		{
+			name: "Missing Items field",
+			documentFields: map[string]diDocumentField{
+				"VendorName":   {Content: "Vendor F"},
+				"CustomerName": {Content: "Customer W"},
+				"InvoiceId":    {Content: "INV00000"},
+			},
+			expectedOutput: "Invoice INV00000 from Vendor F to Customer W",
+		},
 	}
 
 	for _, tt := range tests {
@@ -276,6 +291,13 @@ func Test_diDocument_getGross(t *testing.T) {
 				"InvoiceTotal": {ValueCurrency: &diCurrency{Amount: 0.0}},
 			},
 			expectedGross: func() *float64 { v := 0.0; return &v }(),
+		},
+		{
+			name: "InvoiceTotal present with nil ValueCurrency",
+			documentFields: map[string]diDocumentField{
+				"InvoiceTotal": {ValueCurrency: nil},
+			},
+			expectedGross: nil,
 		},
 	}
 
