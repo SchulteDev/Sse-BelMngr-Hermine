@@ -3,12 +3,13 @@ package hermine
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
 	_ "modernc.org/sqlite" // Imported for usage with sqlx, which relies on a database driver
-	"strings"
-	"time"
 )
 
 const (

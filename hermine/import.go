@@ -1,11 +1,12 @@
 package hermine
 
 import (
-	"github.com/jmoiron/sqlx"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 )
 
 func ProcessFiles(db *sqlx.DB, diEndpoint, diKey string, belegManagerDirectory *os.File, filesToImport []string) {
@@ -87,48 +88,18 @@ func importIntoBelegManager(logger *log.Entry, db *sqlx.DB, dbSemaphore chan str
 	}
 	defer finishTransaction(tx)
 
-	beleg, err := createOrUpdateBeleg(logger, tx, belegManagerDirectory, pathOfFileToImport, analysedDocument)
+	repo := NewRepository(tx)
+	beleg, err := repo.createOrUpdateBeleg(logger, belegManagerDirectory, pathOfFileToImport, analysedDocument)
 	if err != nil {
 		return nil, err
 	}
 
-	if linkCustomerCategoryErr := linkCategoryToBeleg(logger, tx, analysedDocument, "CustomerName", beleg); linkCustomerCategoryErr != nil {
+	if linkCustomerCategoryErr := repo.LinkCategoryToBeleg(logger, analysedDocument, "CustomerName", beleg); linkCustomerCategoryErr != nil {
 		return nil, linkCustomerCategoryErr
 	}
-	if linkVendorCategoryErr := linkCategoryToBeleg(logger, tx, analysedDocument, "VendorName", beleg); linkVendorCategoryErr != nil {
+	if linkVendorCategoryErr := repo.LinkCategoryToBeleg(logger, analysedDocument, "VendorName", beleg); linkVendorCategoryErr != nil {
 		return nil, linkVendorCategoryErr
 	}
 
 	return beleg, nil
-}
-
-func createOrUpdateBeleg(logger *log.Entry, tx *sqlx.Tx, belegManagerDirectory *os.File, pathOfFileToImport string, analysedDocument diDocument) (*bmDocBeleg, error) {
-	fileToImportStatInfo, fileStatErr := os.Stat(pathOfFileToImport)
-	if fileStatErr != nil && !os.IsNotExist(fileStatErr) {
-		logger.WithError(fileStatErr).Warnf("Error checking for file %s ", pathOfFileToImport)
-		return nil, fileStatErr
-	}
-
-	bmDocAssets, fileInfoForAsset, findAssetErr := findBmDocAssets(logger, tx, belegManagerDirectory, pathOfFileToImport)
-	if findAssetErr != nil {
-		return nil, findAssetErr
-	}
-
-	if len(bmDocAssets) == 1 && !bmDocAssets[0].isDeleted() && fileInfoForAsset != nil && fileToImportStatInfo.Size() == fileInfoForAsset.Size() {
-		return updateBmDocBeleg(logger, tx, analysedDocument, bmDocAssets[0])
-	}
-
-	return createBmDocBelegWithLinkedAsset(logger, tx, belegManagerDirectory, pathOfFileToImport, analysedDocument)
-}
-
-func linkCategoryToBeleg(logger *log.Entry, tx *sqlx.Tx, analysedDocument diDocument, fieldName string, beleg *bmDocBeleg) error {
-	cat, catErr := findOrCreateBmDocCategory(logger, tx, analysedDocument, fieldName)
-	if catErr != nil {
-		return catErr
-	}
-	if createLinkErr := createIgnoreBmDocLink(logger, tx, cat.UUID, beleg.UUID); createLinkErr != nil {
-		return createLinkErr
-	}
-
-	return nil
 }

@@ -2,11 +2,11 @@ package hermine
 
 import (
 	"fmt"
-	"github.com/jmoiron/sqlx"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -27,14 +27,22 @@ const (
 	selectBmDocLinkTableByTargetUUIDQuery = "SELECT * FROM BmDoc_LinkTable WHERE targetUuid = ?"
 )
 
-func createBmDocBelegWithLinkedAsset(logger *log.Entry, tx *sqlx.Tx, belegManagerDirectory *os.File, pathOfFileToImport string, documentFromAnalysis diDocument) (*bmDocBeleg, error) {
+type Repository struct {
+	q SqlxExecutor
+}
+
+func NewRepository(q SqlxExecutor) *Repository {
+	return &Repository{q: q}
+}
+
+func (r *Repository) createBelegWithLinkedAsset(logger *log.Entry, belegManagerDirectory *os.File, pathOfFileToImport string, documentFromAnalysis diDocument) (*bmDocBeleg, error) {
 	internalFileToImportPath, createCopyErr := copyFileIntoDirectoryIfTargetDoesNotExist(logger, pathOfFileToImport, belegManagerDirectory.Name())
 	if createCopyErr != nil {
 		return nil, createCopyErr
 	}
 
 	fileBaseName := filepath.Base(pathOfFileToImport)
-	newAsset, createAssetErr := createBmDocAsset(logger, tx, fileBaseName, internalFileToImportPath)
+	newAsset, createAssetErr := r.createAsset(logger, fileBaseName, internalFileToImportPath)
 	if createAssetErr != nil {
 		_ = removeFile(logger, internalFileToImportPath)
 		return nil, createAssetErr
@@ -45,7 +53,7 @@ func createBmDocBelegWithLinkedAsset(logger *log.Entry, tx *sqlx.Tx, belegManage
 		return nil, newAssetNotFoundErr
 	}
 
-	beleg, createBelegErr := createBmDocBeleg(logger, tx, documentFromAnalysis)
+	beleg, createBelegErr := r.createBeleg(logger, documentFromAnalysis)
 	if createBelegErr != nil {
 		return nil, createBelegErr
 	}
@@ -55,7 +63,7 @@ func createBmDocBelegWithLinkedAsset(logger *log.Entry, tx *sqlx.Tx, belegManage
 		return nil, noDocumentFoundError
 	}
 
-	if createLinkErr := createIgnoreBmDocLink(logger, tx, newAsset.UUID, beleg.UUID); createLinkErr != nil {
+	if createLinkErr := r.CreateIgnoreLink(logger, newAsset.UUID, beleg.UUID); createLinkErr != nil {
 		return nil, createLinkErr
 	}
 
@@ -66,7 +74,7 @@ func createBmDocBelegWithLinkedAsset(logger *log.Entry, tx *sqlx.Tx, belegManage
 	return beleg, nil
 }
 
-func createBmDocBeleg(logger *log.Entry, tx *sqlx.Tx, documentFromAnalysis diDocument) (*bmDocBeleg, error) {
+func (r *Repository) createBeleg(logger *log.Entry, documentFromAnalysis diDocument) (*bmDocBeleg, error) {
 	fields := documentFromAnalysis.Fields
 
 	bmDocUUID := newBmDocUUID()
@@ -77,16 +85,16 @@ func createBmDocBeleg(logger *log.Entry, tx *sqlx.Tx, documentFromAnalysis diDoc
 	vat := documentFromAnalysis.getVat()
 	gross := documentFromAnalysis.getGross()
 	comment := documentFromAnalysis.createComment()
-	if _, insertErr := tx.Exec(insertBmDocBelegQuery, bmDocUUID, name, 3, 0, now, now, 1, 1, 0, invoiceID, gross, 0, vat, comment, invoiceDate); insertErr != nil {
+	if _, insertErr := r.q.Exec(insertBmDocBelegQuery, bmDocUUID, name, 3, 0, now, now, 1, 1, 0, invoiceID, gross, 0, vat, comment, invoiceDate); insertErr != nil {
 		logger.WithError(insertErr).Warnf("Error when inserting new BmDoc_Beleg")
 		return nil, insertErr
 	}
 
-	return findBmDocBelegByUUID(logger, tx, &bmDocUUID)
+	return r.findBelegByUUID(logger, &bmDocUUID)
 }
 
-func updateBmDocBeleg(logger *log.Entry, tx *sqlx.Tx, documentFromAnalysis diDocument, existingAsset *bmDocAsset) (*bmDocBeleg, error) {
-	beleg, findBelegErr := findBmDocBelegByAsset(logger, tx, existingAsset)
+func (r *Repository) updateBeleg(logger *log.Entry, documentFromAnalysis diDocument, existingAsset *bmDocAsset) (*bmDocBeleg, error) {
+	beleg, findBelegErr := r.findBelegByAsset(logger, existingAsset)
 	if findBelegErr != nil {
 		return nil, findBelegErr
 	}
@@ -105,12 +113,12 @@ func updateBmDocBeleg(logger *log.Entry, tx *sqlx.Tx, documentFromAnalysis diDoc
 	vat := documentFromAnalysis.getVat()
 	gross := documentFromAnalysis.getGross()
 	comment := documentFromAnalysis.createComment()
-	if _, err := tx.Exec(updateBmDocBelegQuery, name, now, invoiceID, gross, 0, vat, comment, invoiceDate, beleg.ID); err != nil {
+	if _, err := r.q.Exec(updateBmDocBelegQuery, name, now, invoiceID, gross, 0, vat, comment, invoiceDate, beleg.ID); err != nil {
 		belegLogger.WithError(err).Warnf("Error when updating BmDoc_Beleg %d", beleg.ID)
 		return nil, err
 	}
 
-	updatedBeleg, findBelegErr := findBmDocBelegByID(belegLogger, tx, beleg.ID)
+	updatedBeleg, findBelegErr := r.findBelegByID(belegLogger, beleg.ID)
 	if findBelegErr != nil {
 		return nil, findBelegErr
 	}
@@ -124,9 +132,9 @@ func updateBmDocBeleg(logger *log.Entry, tx *sqlx.Tx, documentFromAnalysis diDoc
 	return updatedBeleg, nil
 }
 
-func findBmDocBelegByID(logger *log.Entry, q sqlxGetter, id uint32) (*bmDocBeleg, error) {
+func (r *Repository) findBelegByID(logger *log.Entry, id uint32) (*bmDocBeleg, error) {
 	doc := bmDocBeleg{}
-	if err := q.Get(&doc, selectBmDocBelegByIDQuery, id); err != nil {
+	if err := r.q.Get(&doc, selectBmDocBelegByIDQuery, id); err != nil {
 		logger.WithError(err).Warnf("Error when searching BmDoc_Beleg for id %d", id)
 		return nil, err
 	}
@@ -134,9 +142,9 @@ func findBmDocBelegByID(logger *log.Entry, q sqlxGetter, id uint32) (*bmDocBeleg
 	return &doc, nil
 }
 
-func findBmDocBelegByUUID(logger *log.Entry, tx *sqlx.Tx, uuid *string) (*bmDocBeleg, error) {
+func (r *Repository) findBelegByUUID(logger *log.Entry, uuid *string) (*bmDocBeleg, error) {
 	doc := bmDocBeleg{}
-	if err := tx.Get(&doc, selectBmDocBelegByUUIDQuery, uuid); err != nil {
+	if err := r.q.Get(&doc, selectBmDocBelegByUUIDQuery, uuid); err != nil {
 		logger.WithError(err).Warnf("Error when searching BmDoc_Beleg for uuid %s", *uuid)
 		return nil, err
 	}
@@ -144,8 +152,8 @@ func findBmDocBelegByUUID(logger *log.Entry, tx *sqlx.Tx, uuid *string) (*bmDocB
 	return &doc, nil
 }
 
-func findBmDocBelegByAsset(logger *log.Entry, tx *sqlx.Tx, asset *bmDocAsset) (*bmDocBeleg, error) {
-	link, findLinkErr := findBmDocLinkByAssetAsSource(logger, tx, asset)
+func (r *Repository) findBelegByAsset(logger *log.Entry, asset *bmDocAsset) (*bmDocBeleg, error) {
+	link, findLinkErr := r.findLinkByAssetAsSource(logger, asset)
 	if findLinkErr != nil {
 		return nil, findLinkErr
 	}
@@ -154,13 +162,13 @@ func findBmDocBelegByAsset(logger *log.Entry, tx *sqlx.Tx, asset *bmDocAsset) (*
 		return nil, nil
 	}
 
-	return findBmDocBelegByUUID(logger, tx, &link.TargetUUID)
+	return r.findBelegByUUID(logger, &link.TargetUUID)
 }
 
-func createIgnoreBmDocLink(logger *log.Entry, tx *sqlx.Tx, sourceUUID, targetUUID string) error {
+func (r *Repository) CreateIgnoreLink(logger *log.Entry, sourceUUID, targetUUID string) error {
 	result := make([]*bmDocLink, 0)
 	selectQuery := "SELECT * FROM BmDoc_LinkTable WHERE sourceUuid = ? AND targetUuid = ?"
-	if err := tx.Select(&result, selectQuery, sourceUUID, targetUUID); err != nil {
+	if err := r.q.Select(&result, selectQuery, sourceUUID, targetUUID); err != nil {
 		logger.WithError(err).Warnf("Error when searching BmDoc_LinkTable for source %s and target %s", sourceUUID, targetUUID)
 		return err
 	}
@@ -168,7 +176,7 @@ func createIgnoreBmDocLink(logger *log.Entry, tx *sqlx.Tx, sourceUUID, targetUUI
 		return nil
 	}
 
-	if _, err := tx.Exec(insertOrIgnoreBmDocLinkTableQuery, sourceUUID, targetUUID); err != nil {
+	if _, err := r.q.Exec(insertOrIgnoreBmDocLinkTableQuery, sourceUUID, targetUUID); err != nil {
 		logger.WithError(err).Warnf("Error when linking %s and %s as BmDoc_LinkTable", sourceUUID, targetUUID)
 		return err
 	}
@@ -176,10 +184,10 @@ func createIgnoreBmDocLink(logger *log.Entry, tx *sqlx.Tx, sourceUUID, targetUUI
 	return nil
 }
 
-func findBmDocLinkByAssetAsSource(logger *log.Entry, tx *sqlx.Tx, asset *bmDocAsset) (*bmDocLink, error) {
+func (r *Repository) findLinkByAssetAsSource(logger *log.Entry, asset *bmDocAsset) (*bmDocLink, error) {
 	assetUUID := asset.UUID
 	result := make([]*bmDocLink, 0)
-	if err := tx.Select(&result, selectBmDocLinkTableBySourceUUIDQuery, assetUUID); err != nil {
+	if err := r.q.Select(&result, selectBmDocLinkTableBySourceUUIDQuery, assetUUID); err != nil {
 		logger.WithError(err).Warnf("Error when searching BmDoc_LinkTable for asset %s as source", assetUUID)
 		return nil, err
 	}
@@ -195,11 +203,11 @@ func findBmDocLinkByAssetAsSource(logger *log.Entry, tx *sqlx.Tx, asset *bmDocAs
 	return nil, nil
 }
 
-func findBmDocLinkByBelegAsTarget(logger *log.Entry, q sqlxSelecter, beleg *bmDocBeleg) ([]bmDocLink, error) {
+func (r *Repository) FindLinkByBelegAsTarget(logger *log.Entry, beleg *bmDocBeleg) ([]bmDocLink, error) {
 	belegUUID := beleg.UUID
 	result := make([]bmDocLink, 0)
 
-	if err := q.Select(&result, selectBmDocLinkTableByTargetUUIDQuery, belegUUID); err != nil {
+	if err := r.q.Select(&result, selectBmDocLinkTableByTargetUUIDQuery, belegUUID); err != nil {
 		logger.WithError(err).Warnf("Error when searching BmDoc_LinkTable for beleg %s as target", belegUUID)
 		return nil, err
 	}
@@ -207,10 +215,10 @@ func findBmDocLinkByBelegAsTarget(logger *log.Entry, q sqlxSelecter, beleg *bmDo
 	return result, nil
 }
 
-func createBmDocAsset(logger *log.Entry, tx *sqlx.Tx, fileName, internalPath string) (*bmDocAsset, error) {
+func (r *Repository) createAsset(logger *log.Entry, fileName, internalPath string) (*bmDocAsset, error) {
 	bmDocUUID := newBmDocUUID()
 	now := time.Now().Format(bmDocRFC3339Milli)
-	result, execErr := tx.Exec(insertBmDocAssetQuery, bmDocUUID, fileName, 4, 0, now, now, 1, 1, 0, 3, 0, internalPath, 2)
+	result, execErr := r.q.Exec(insertBmDocAssetQuery, bmDocUUID, fileName, 4, 0, now, now, 1, 1, 0, 3, 0, internalPath, 2)
 	if execErr != nil {
 		logger.WithError(execErr).Warnf("Error when inserting %s/%s as new BmDoc_Asset", fileName, internalPath)
 		return nil, execErr
@@ -223,7 +231,7 @@ func createBmDocAsset(logger *log.Entry, tx *sqlx.Tx, fileName, internalPath str
 	}
 	logger.WithField("bmdoc_asset_id", newID).Debug("Created new BmDoc_Asset")
 
-	newAsset, newAssetErr := findBmDocAssetByID(logger, tx, newID)
+	newAsset, newAssetErr := r.findAssetByID(logger, newID)
 	if newAssetErr != nil {
 		logger.WithError(newAssetErr).Warnf("Error when searching BmDoc_Asset for id %d", newID)
 		return nil, newAssetErr
@@ -232,9 +240,9 @@ func createBmDocAsset(logger *log.Entry, tx *sqlx.Tx, fileName, internalPath str
 	return newAsset, nil
 }
 
-func findBmDocAssetByID(logger *log.Entry, q sqlxGetter, id int64) (*bmDocAsset, error) {
+func (r *Repository) findAssetByID(logger *log.Entry, id int64) (*bmDocAsset, error) {
 	asset := bmDocAsset{}
-	if err := q.Get(&asset, selectBmDocAssetByIDQuery, id); err != nil {
+	if err := r.q.Get(&asset, selectBmDocAssetByIDQuery, id); err != nil {
 		logger.WithError(err).Warnf("Error when searching BmDoc_Asset for id %d", id)
 		return nil, err
 	}
@@ -242,7 +250,7 @@ func findBmDocAssetByID(logger *log.Entry, q sqlxGetter, id int64) (*bmDocAsset,
 	return &asset, nil
 }
 
-func findBmDocAssets(logger *log.Entry, q sqlxSelecter, belegManagerDirectory *os.File, pathOfFileToImport string) ([]*bmDocAsset, os.FileInfo, error) {
+func (r *Repository) FindAssets(logger *log.Entry, belegManagerDirectory *os.File, pathOfFileToImport string) ([]*bmDocAsset, os.FileInfo, error) {
 	fileBaseName := filepath.Base(pathOfFileToImport)
 
 	belegManagerFilePath := filepath.Join(belegManagerDirectory.Name(), fileBaseName)
@@ -253,7 +261,7 @@ func findBmDocAssets(logger *log.Entry, q sqlxSelecter, belegManagerDirectory *o
 	}
 
 	bmDocAssets := make([]*bmDocAsset, 0)
-	if selectAssetErr := q.Select(&bmDocAssets, selectBmDocAssetByInternalPathQuery, fileBaseName); selectAssetErr != nil {
+	if selectAssetErr := r.q.Select(&bmDocAssets, selectBmDocAssetByInternalPathQuery, fileBaseName); selectAssetErr != nil {
 		logger.WithError(selectAssetErr).Warnf("Error when searching BmDoc_Asset-internalPath: %s", fileBaseName)
 		return nil, nil, selectAssetErr
 	}
@@ -261,37 +269,37 @@ func findBmDocAssets(logger *log.Entry, q sqlxSelecter, belegManagerDirectory *o
 	return bmDocAssets, fileStatInfo, nil
 }
 
-func findOrCreateBmDocCategory(logger *log.Entry, tx *sqlx.Tx, documentFromAnalysis diDocument, fieldName string) (*bmDocCategory, error) {
-	cat, catErr := findBmDocCategoryFromAnalysis(logger, tx, documentFromAnalysis, fieldName)
+func (r *Repository) findOrCreateCategory(logger *log.Entry, documentFromAnalysis diDocument, fieldName string) (*bmDocCategory, error) {
+	cat, catErr := r.findCategoryFromAnalysis(logger, documentFromAnalysis, fieldName)
 	if cat != nil || catErr != nil {
 		return cat, catErr
 	}
 
-	if err := createBmDocCategory(logger, tx, documentFromAnalysis, fieldName); err != nil {
+	if err := r.CreateCategory(logger, documentFromAnalysis, fieldName); err != nil {
 		return nil, err
 	}
-	return findBmDocCategoryFromAnalysis(logger, tx, documentFromAnalysis, fieldName)
+	return r.findCategoryFromAnalysis(logger, documentFromAnalysis, fieldName)
 }
 
-func createBmDocCategory(logger *log.Entry, tx *sqlx.Tx, documentFromAnalysis diDocument, fieldName string) error {
+func (r *Repository) CreateCategory(logger *log.Entry, documentFromAnalysis diDocument, fieldName string) error {
 	bmDocUUID := newBmDocUUID()
 	categoryName := documentFromAnalysis.getContentFieldCommaSeperated(fieldName)
 	now := time.Now().Format(bmDocRFC3339Milli)
-	if _, err := tx.Exec(insertBmDocCategoryQuery, bmDocUUID, categoryName, 1, 0, now, now, 1, 1, 0); err != nil {
+	if _, err := r.q.Exec(insertBmDocCategoryQuery, bmDocUUID, categoryName, 1, 0, now, now, 1, 1, 0); err != nil {
 		logger.WithError(err).Warnf("Error when inserting %s as new BmDoc_Kategorie '%s': %s", fieldName, categoryName, err)
 		return err
 	}
 	return nil
 }
 
-func findBmDocCategoryFromAnalysis(logger *log.Entry, tx *sqlx.Tx, documentFromAnalysis diDocument, fieldName string) (*bmDocCategory, error) {
+func (r *Repository) findCategoryFromAnalysis(logger *log.Entry, documentFromAnalysis diDocument, fieldName string) (*bmDocCategory, error) {
 	categoryName := documentFromAnalysis.getContentFieldCommaSeperated(fieldName)
-	return findBmDocCategoryByName(logger, tx, categoryName)
+	return r.findCategoryByName(logger, categoryName)
 }
 
-func findBmDocCategoryByName(logger *log.Entry, q sqlxSelecter, categoryName string) (*bmDocCategory, error) {
+func (r *Repository) findCategoryByName(logger *log.Entry, categoryName string) (*bmDocCategory, error) {
 	result := make([]*bmDocCategory, 0)
-	if err := q.Select(&result, selectBmDocCategoryByNameQuery, categoryName); err != nil {
+	if err := r.q.Select(&result, selectBmDocCategoryByNameQuery, categoryName); err != nil {
 		logger.WithError(err).Warnf("Error when searching for %s BmDoc_Kategorie: %s", categoryName, err)
 		return nil, err
 	}
@@ -310,4 +318,35 @@ func findBmDocCategoryByName(logger *log.Entry, q sqlxSelecter, categoryName str
 		return result[0], nil
 	}
 	return nil, nil
+}
+
+func (r *Repository) createOrUpdateBeleg(logger *log.Entry, belegManagerDirectory *os.File, pathOfFileToImport string, analysedDocument diDocument) (*bmDocBeleg, error) {
+	fileToImportStatInfo, fileStatErr := os.Stat(pathOfFileToImport)
+	if fileStatErr != nil && !os.IsNotExist(fileStatErr) {
+		logger.WithError(fileStatErr).Warnf("Error checking for file %s ", pathOfFileToImport)
+		return nil, fileStatErr
+	}
+
+	bmDocAssets, fileInfoForAsset, findAssetErr := r.FindAssets(logger, belegManagerDirectory, pathOfFileToImport)
+	if findAssetErr != nil {
+		return nil, findAssetErr
+	}
+
+	if len(bmDocAssets) == 1 && !bmDocAssets[0].isDeleted() && fileInfoForAsset != nil && fileToImportStatInfo.Size() == fileInfoForAsset.Size() {
+		return r.updateBeleg(logger, analysedDocument, bmDocAssets[0])
+	}
+
+	return r.createBelegWithLinkedAsset(logger, belegManagerDirectory, pathOfFileToImport, analysedDocument)
+}
+
+func (r *Repository) LinkCategoryToBeleg(logger *log.Entry, analysedDocument diDocument, fieldName string, beleg *bmDocBeleg) error {
+	cat, catErr := r.findOrCreateCategory(logger, analysedDocument, fieldName)
+	if catErr != nil {
+		return catErr
+	}
+	if createLinkErr := r.CreateIgnoreLink(logger, cat.UUID, beleg.UUID); createLinkErr != nil {
+		return createLinkErr
+	}
+
+	return nil
 }

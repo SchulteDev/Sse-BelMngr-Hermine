@@ -58,7 +58,8 @@ func Test_importIntoBelegManager(t *testing.T) {
 func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManagerDirectory *os.File, importedBeleg *bmDocBeleg, pathOfFileToImport string) *bmDocBeleg {
 	t.Helper()
 
-	bmDocAssets, fileInfoForAsset, findAssetErr := findBmDocAssets(logger, db, belegManagerDirectory, pathOfFileToImport)
+	repo := NewRepository(db)
+	bmDocAssets, fileInfoForAsset, findAssetErr := repo.FindAssets(logger, belegManagerDirectory, pathOfFileToImport)
 	require.NoError(t, findAssetErr)
 	require.Len(t, bmDocAssets, 1)
 	require.NotNil(t, fileInfoForAsset)
@@ -82,7 +83,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	require.Len(t, originalFileContent, len(finalBelegFileContent), "The lengths of the files' contents should be equal")
 	assert.Equal(t, originalFileContent, finalBelegFileContent, "The contents of the files should be equal")
 
-	beleg, findBelegErr := findBmDocBelegByID(logger, db, 1)
+	beleg, findBelegErr := repo.findBelegByID(logger, 1)
 	require.NoError(t, findBelegErr)
 	require.EqualValues(t, 1, beleg.ID)
 	require.Equal(t, importedBeleg, beleg)
@@ -97,7 +98,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	assert.Equal(t, "2023-01-15", *beleg.BelegDate)
 	assertDefaultBmDocEntity(t, beleg.bmDocEntity)
 
-	msCategory, findMsCategoryErr := findBmDocCategoryByName(logger, db, "MICROSOFT")
+	msCategory, findMsCategoryErr := repo.findCategoryByName(logger, "MICROSOFT")
 	require.NoError(t, findMsCategoryErr)
 	require.EqualValues(t, 11, msCategory.ID)
 	assert.NotEmpty(t, msCategory.UUID)
@@ -105,7 +106,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	assert.EqualValues(t, 1, *msCategory.DocType)
 	assertDefaultBmDocEntity(t, msCategory.bmDocEntity)
 
-	ctsCategory, findCtsCategoryErr := findBmDocCategoryByName(logger, db, "CONTOSO")
+	ctsCategory, findCtsCategoryErr := repo.findCategoryByName(logger, "CONTOSO")
 	require.NoError(t, findCtsCategoryErr)
 	require.EqualValues(t, 12, ctsCategory.ID)
 	assert.NotEmpty(t, ctsCategory.UUID)
@@ -113,7 +114,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	assert.EqualValues(t, 1, *ctsCategory.DocType)
 	assertDefaultBmDocEntity(t, ctsCategory.bmDocEntity)
 
-	docLinks, findDocLinksErr := findBmDocLinkByBelegAsTarget(logger, db, beleg)
+	docLinks, findDocLinksErr := repo.FindLinkByBelegAsTarget(logger, beleg)
 	require.NoError(t, findDocLinksErr)
 	require.Len(t, docLinks, 3)
 	foundAssetLink := false
@@ -139,7 +140,8 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 func assertBelegUpdate(t *testing.T, logger *log.Entry, db *sqlx.DB, belegBefore, reimportedBeleg *bmDocBeleg) {
 	t.Helper()
 
-	beleg, findBelegErr := findBmDocBelegByID(logger, db, 1)
+	repo := NewRepository(db)
+	beleg, findBelegErr := repo.findBelegByID(logger, 1)
 	require.NoError(t, findBelegErr)
 	require.EqualValues(t, 1, beleg.ID)
 	require.Equal(t, reimportedBeleg, beleg)
