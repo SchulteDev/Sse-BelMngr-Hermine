@@ -2,15 +2,16 @@ package cli
 
 import (
 	"fmt"
+	"os"
+	"os/user"
+	"path/filepath"
+	"strings"
+
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"os"
-	"os/user"
-	"path/filepath"
-	"strings"
 )
 
 const shortCommandDescription = "Sse-BelMngr-Hermine analyzes local documents " +

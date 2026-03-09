@@ -2,11 +2,12 @@ package hermine
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"path/filepath"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func copyFileIntoDirectoryIfTargetDoesNotExist(logger *log.Entry, filePath, directoryPath string) (string, error) {

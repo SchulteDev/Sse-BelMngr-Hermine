@@ -1,10 +1,11 @@
 package cli
 
 import (
-	log "github.com/sirupsen/logrus"
 	"os"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var initLogOnce sync.Once

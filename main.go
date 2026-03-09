@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/SchulteDev/Sse-BelMngr-Hermine/cli"
 	"os"
+
+	"github.com/SchulteDev/Sse-BelMngr-Hermine/cli"
 )
 
 func main() {

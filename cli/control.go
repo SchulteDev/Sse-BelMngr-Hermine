@@ -1,12 +1,13 @@
 package cli
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/SchulteDev/Sse-BelMngr-Hermine/hermine"
 	"github.com/bmatcuk/doublestar/v4"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"os"
-	"path/filepath"
 )
 
 var (

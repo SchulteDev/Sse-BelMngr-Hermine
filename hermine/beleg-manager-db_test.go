@@ -1,11 +1,12 @@
 package hermine
 
 import (
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"path/filepath"
 	"regexp"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const belMngrEmptySqLiteDatabaseFileName = "BelegManager_empty.db4"
