@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.2...v0.1.3) (2026-03-11)
+
+
+### Bug Fixes
+
+* Improve nil pointer handling in CSV log conversion functions ([1dc74d9](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/1dc74d9b3b6f48ef61b0c51d8aadd8d5658265a6))
+
 ## [0.1.2](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.1...v0.1.2) (2026-03-09)
 
 
