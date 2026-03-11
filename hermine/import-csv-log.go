@@ -73,14 +73,14 @@ func belegToCsvLog(beleg *bmDocBeleg) []string {
 	return []string{
 		strconv.FormatUint(uint64(beleg.ID), 10),
 		beleg.Name,
-		*beleg.BelegDate,
+		convertStringPointerToString(beleg.BelegDate),
 		convertFloatPointerToString(beleg.Amount),
 	}
 }
 
 func diDocumentToCsvLog(d *diDocument) []string {
 	if d == nil {
-		return []string{"", "", ""}
+		return []string{"", ""}
 	}
 
 	return []string{
@@ -92,6 +92,14 @@ func diDocumentToCsvLog(d *diDocument) []string {
 func convertFloatPointerToString(value *float64) string {
 	if value != nil {
 		return fmt.Sprintf("%.2f", *value)
+	}
+
+	return ""
+}
+
+func convertStringPointerToString(value *string) string {
+	if value != nil {
+		return *value
 	}
 
 	return ""
