@@ -178,11 +178,15 @@ func (d *diDocument) getVat() *float64 {
 
 	taxDetail := (*taxDetails.ValueArray)[0]
 	taxRateObject := taxDetail.ValueObject["Rate"]
-	// vatAsStringWithPercentSign example: "19%", "19 %"
+	// vatAsStringWithPercentSign example: "19%", "19 %", "19,0%:"
 	vatAsStringWithPercentSign := taxRateObject.Content
-	vatAsStringWithoutPercentSign := strings.TrimRight(strings.TrimSuffix(vatAsStringWithPercentSign, "%"), " \t")
-	vatAsStringWithoutPercentSignNormalized := strings.ReplaceAll(vatAsStringWithoutPercentSign, ",", ".")
-	vat, err := strconv.ParseFloat(vatAsStringWithoutPercentSignNormalized, 64)
+	vatAsString := vatAsStringWithPercentSign
+	if percentIndex := strings.Index(vatAsString, "%"); percentIndex != -1 {
+		vatAsString = vatAsString[:percentIndex]
+	}
+	vatAsString = strings.TrimRight(vatAsString, " \t")
+	vatAsStringNormalized := strings.ReplaceAll(vatAsString, ",", ".")
+	vat, err := strconv.ParseFloat(vatAsStringNormalized, 64)
 	if err != nil {
 		log.WithError(err).Debugf("%v", vatAsStringWithPercentSign)
 		return nil
