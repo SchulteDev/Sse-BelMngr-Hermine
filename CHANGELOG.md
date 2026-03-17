@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.3](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.2...v0.1.3) (2026-03-17)
+
+
+### Bug Fixes
+
+* **deps:** update module modernc.org/sqlite to v1.46.2 ([#65](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/65)) ([1b71c9c](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/1b71c9cde45377b606907824fc2c478e4b591b2e))
+* **deps:** update module modernc.org/sqlite to v1.47.0 ([#66](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/66)) ([56361dc](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/56361dcc18dc83ed0b3ab8a9613b282c42a158d8))
+* Improve nil pointer handling in CSV log conversion functions ([1dc74d9](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/1dc74d9b3b6f48ef61b0c51d8aadd8d5658265a6))
+* Update VAT parsing logic to handle additional formats and edge cases ([8c7b58e](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/8c7b58e51a527cf2d84c87632c8b5df1db0a8c09))
+
 ## [0.1.2](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.1...v0.1.2) (2026-03-09)
 
 
