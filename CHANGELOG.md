@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.3...v0.1.4) (2026-03-27)
+
+
+### Bug Fixes
+
+* **deps:** update module modernc.org/sqlite to v1.48.0 ([#67](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/67)) ([7ee8b6f](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/7ee8b6f985f45cfa77b1dbc4ab41ab5e3a8f0a6c))
+
 ## [0.1.3](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.2...v0.1.3) (2026-03-17)
 
 
