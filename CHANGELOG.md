@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.4](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.3...v0.1.4) (2026-04-25)
+
+
+### Bug Fixes
+
+* **deps:** update module modernc.org/sqlite to v1.48.0 ([#67](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/67)) ([7ee8b6f](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/7ee8b6f985f45cfa77b1dbc4ab41ab5e3a8f0a6c))
+* **deps:** update module modernc.org/sqlite to v1.48.1 ([#69](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/69)) ([3637106](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/36371063309be588c0aa64b9d99e512bc2c02856))
+* **deps:** update module modernc.org/sqlite to v1.48.2 ([#71](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/71)) ([1b91e63](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/1b91e636e4a40271b0a91cf3ecf00a9f74f65376))
+* **deps:** update module modernc.org/sqlite to v1.49.0 ([#72](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/72)) ([4b952ca](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/4b952cad9424aa9c6ec6b29239c73bb55f2929fd))
+* **deps:** update module modernc.org/sqlite to v1.49.1 ([#73](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/73)) ([60ad849](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/60ad849b14afbaa28702be16836ad435c6f0aba0))
+* **deps:** update module modernc.org/sqlite to v1.50.0 ([#75](https://github.com/SchulteDev/Sse-BelMngr-Hermine/issues/75)) ([dfe85df](https://github.com/SchulteDev/Sse-BelMngr-Hermine/commit/dfe85df277e5abd50f35e22c1d457f6c7ea05238))
+
 ## [0.1.3](https://github.com/SchulteDev/Sse-BelMngr-Hermine/compare/v0.1.2...v0.1.3) (2026-03-17)
 
 
