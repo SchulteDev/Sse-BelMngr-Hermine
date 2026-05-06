@@ -76,7 +76,7 @@ func importIntoBelegManager(logger *log.Entry, db *sqlx.DB, dbSemaphore chan str
 		return nil, documentIsNoInvoiceErr
 	}
 
-	// Block if another transaction is in progress, release 'dbSemaphore' via defer
+	// Block if another transaction is in progress, release 'dbSemaphore' via defer.
 	dbSemaphore <- struct{}{}
 	defer func() {
 		<-dbSemaphore

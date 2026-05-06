@@ -50,6 +50,11 @@ const (
 	headerVatRate                = "VatRate"
 )
 
+// Test Constants.
+const (
+	testBelegName = "Test Beleg"
+)
+
 type SqlxSelecter interface {
 	Select(dest any, query string, args ...any) error
 }

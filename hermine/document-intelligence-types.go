@@ -48,7 +48,7 @@ type diDocumentField struct {
 	BoundingRegions []diBoundingRegion `json:"boundingRegions"`
 	Confidence      float64            `json:"confidence"`
 	Spans           []diSpan           `json:"spans"`
-	// Specialized field Fields
+	// Specialized field Fields.
 	ValueString   *string                `json:"valueString,omitempty"`
 	ValueDate     *string                `json:"valueDate,omitempty"`
 	ValueNumber   *float64               `json:"valueNumber,omitempty"`
@@ -178,7 +178,7 @@ func (d *diDocument) getVat() *float64 {
 
 	taxDetail := (*taxDetails.ValueArray)[0]
 	taxRateObject := taxDetail.ValueObject[fieldRate]
-	// vatAsStringWithPercentSign example: "19%", "19 %", "19,0%:"
+	// vatAsStringWithPercentSign example: "19%", "19 %", "19,0%.".
 	vatAsStringWithPercentSign := taxRateObject.Content
 	vatAsString := vatAsStringWithPercentSign
 	if percentIndex := strings.Index(vatAsString, "%"); percentIndex != -1 {
