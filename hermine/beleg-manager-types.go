@@ -6,6 +6,29 @@ import (
 
 const bmDocRFC3339Milli = "2006-01-02T15:04:05.000Z"
 
+// Document Intelligence Field Names
+const (
+	fieldInvoiceTotal = "InvoiceTotal"
+	fieldVendorName   = "VendorName"
+	fieldCustomerName = "CustomerName"
+	fieldItems        = "Items"
+	fieldDescription  = "Description"
+	fieldInvoiceID    = "InvoiceId"
+	fieldTaxDetails   = "TaxDetails"
+	fieldRate         = "Rate"
+)
+
+// CSV Log Headers
+const (
+	headerOriginalPath           = "OriginalPath"
+	headerBelegID                = "BelegID"
+	headerBelegName              = "BelegName"
+	headerBelegDate              = "BelegDate"
+	headerInvoiceTotal           = fieldInvoiceTotal
+	headerInvoiceTotalConfidence = "InvoiceTotalConfidence"
+	headerVatRate                = "VatRate"
+)
+
 type SqlxSelecter interface {
 	Select(dest any, query string, args ...any) error
 }

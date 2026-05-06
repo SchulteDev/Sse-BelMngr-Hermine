@@ -93,17 +93,6 @@ func (d *diAnalysisStatus) isStatusSucceeded() bool {
 	return d.Status == "succeeded"
 }
 
-const (
-	fieldInvoiceTotal = "InvoiceTotal"
-	fieldVendorName   = "VendorName"
-	fieldCustomerName = "CustomerName"
-	fieldItems        = "Items"
-	fieldDescription  = "Description"
-	fieldInvoiceID    = "InvoiceId"
-	fieldTaxDetails   = "TaxDetails"
-	fieldRate         = "Rate"
-)
-
 func (d *diDocument) createComment() string {
 	items := d.Fields[fieldItems].ValueArray
 	itemNamesTextBlock := ""

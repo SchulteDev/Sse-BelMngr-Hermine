@@ -94,10 +94,10 @@ func importIntoBelegManager(logger *log.Entry, db *sqlx.DB, dbSemaphore chan str
 		return nil, err
 	}
 
-	if linkCustomerCategoryErr := repo.linkCategoryToBeleg(logger, analysedDocument, "CustomerName", beleg); linkCustomerCategoryErr != nil {
+	if linkCustomerCategoryErr := repo.linkCategoryToBeleg(logger, analysedDocument, fieldCustomerName, beleg); linkCustomerCategoryErr != nil {
 		return nil, linkCustomerCategoryErr
 	}
-	if linkVendorCategoryErr := repo.linkCategoryToBeleg(logger, analysedDocument, "VendorName", beleg); linkVendorCategoryErr != nil {
+	if linkVendorCategoryErr := repo.linkCategoryToBeleg(logger, analysedDocument, fieldVendorName, beleg); linkVendorCategoryErr != nil {
 		return nil, linkVendorCategoryErr
 	}
 
