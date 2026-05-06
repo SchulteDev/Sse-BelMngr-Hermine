@@ -35,10 +35,6 @@ type bmDocEntity struct {
 	TimestampLastSync *string `db:"timestampLastSync"` // TEXT, nullable.
 }
 
-func (e bmDocEntity) isDeleted() bool {
-	return e.DeleteState != nil && *e.DeleteState != 0
-}
-
 // bmDocAsset corresponds to the BmDoc_Asset table.
 type bmDocAsset struct {
 	bmDocEntity
