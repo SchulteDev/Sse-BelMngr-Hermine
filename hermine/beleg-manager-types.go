@@ -6,7 +6,7 @@ import (
 
 const bmDocRFC3339Milli = "2006-01-02T15:04:05.000Z"
 
-// Document Intelligence Field Names
+// Document Intelligence Field Names.
 const (
 	fieldInvoiceTotal = "InvoiceTotal"
 	fieldVendorName   = "VendorName"
@@ -19,7 +19,7 @@ const (
 	fieldRate         = "Rate"
 )
 
-// Table Names
+// Table Names.
 const (
 	tableNameAsset     = "BmDoc_Asset"
 	tableNameBeleg     = "BmDoc_Beleg"
@@ -27,19 +27,19 @@ const (
 	tableNameLinkTable = "BmDoc_LinkTable"
 )
 
-// Logging Keys
+// Logging Keys.
 const (
 	logFieldBelegID   = "beleg_id"
 	logFieldBelegName = "beleg_name"
 )
 
-// Common format strings
+// Common format strings.
 const (
 	fmtTwoDecimalPlaces          = "%.2f"
 	prefixInvoiceTotalConfidence = "\n\nInvoiceTotal confidence: "
 )
 
-// CSV Log Headers
+// CSV Log Headers.
 const (
 	headerOriginalPath           = "OriginalPath"
 	headerBelegID                = "BelegID"
