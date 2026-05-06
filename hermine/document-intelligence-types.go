@@ -108,10 +108,10 @@ func (d *diDocument) createComment() string {
 
 	confidenceText := "-"
 	if grossConfidence := d.getGrossConfidence(); grossConfidence != nil {
-		confidenceText = fmt.Sprintf("%.2f", *grossConfidence)
+		confidenceText = fmt.Sprintf(fmtTwoDecimalPlaces, *grossConfidence)
 	}
 
-	return fmt.Sprintf("%s\n\nInvoiceTotal confidence: %s", itemNamesTextBlock, confidenceText)
+	return fmt.Sprintf("%s"+prefixInvoiceTotalConfidence+"%s", itemNamesTextBlock, confidenceText)
 }
 
 func (d *diDocument) createInvoiceName() string {

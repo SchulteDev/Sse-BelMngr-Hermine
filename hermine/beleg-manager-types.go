@@ -14,8 +14,29 @@ const (
 	fieldItems        = "Items"
 	fieldDescription  = "Description"
 	fieldInvoiceID    = "InvoiceId"
+	fieldInvoiceDate  = "InvoiceDate"
 	fieldTaxDetails   = "TaxDetails"
 	fieldRate         = "Rate"
+)
+
+// Table Names
+const (
+	tableNameAsset     = "BmDoc_Asset"
+	tableNameBeleg     = "BmDoc_Beleg"
+	tableNameCategory  = "BmDoc_Kategorie"
+	tableNameLinkTable = "BmDoc_LinkTable"
+)
+
+// Logging Keys
+const (
+	logFieldBelegID   = "beleg_id"
+	logFieldBelegName = "beleg_name"
+)
+
+// Common format strings
+const (
+	fmtTwoDecimalPlaces          = "%.2f"
+	prefixInvoiceTotalConfidence = "\n\nInvoiceTotal confidence: "
 )
 
 // CSV Log Headers

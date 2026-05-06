@@ -18,6 +18,10 @@ const (
 	documentAnalysisExampleResultFileName = "di_result.json"
 	invoiceExampleFileName                = "Azure DI example english invoice.png"
 	testDataDirectoryName                 = "testdata"
+
+	testVendorMicrosoft = "MICROSOFT"
+	testVendorContoso   = "CONTOSO"
+	testInvoiceDate     = "2023-01-15"
 )
 
 func Test_importIntoBelegManager(t *testing.T) {
@@ -94,23 +98,23 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManag
 	assert.InEpsilon(t, 118368, *beleg.Amount, 0)
 	assert.EqualValues(t, 0, *beleg.Netto)
 	assert.InEpsilon(t, 20.0, *beleg.VAT, 0)
-	assert.Equal(t, "- MICROSOFT AND CONTONSO PARTNERSHIP PROMOTION VIDEO PO 99881234\n\nInvoiceTotal confidence: 0.95", *beleg.Comment)
-	assert.Equal(t, "2023-01-15", *beleg.BelegDate)
+	assert.Equal(t, "- MICROSOFT AND CONTONSO PARTNERSHIP PROMOTION VIDEO PO 99881234" + prefixInvoiceTotalConfidence + "0.95", *beleg.Comment)
+	assert.Equal(t, testInvoiceDate, *beleg.BelegDate)
 	assertDefaultBmDocEntity(t, beleg.bmDocEntity)
 
-	msCategory, findMsCategoryErr := repo.findCategoryByName(logger, "MICROSOFT")
+	msCategory, findMsCategoryErr := repo.findCategoryByName(logger, testVendorMicrosoft)
 	require.NoError(t, findMsCategoryErr)
 	require.EqualValues(t, 11, msCategory.ID)
 	assert.NotEmpty(t, msCategory.UUID)
-	assert.Equal(t, "MICROSOFT", msCategory.Name)
+	assert.Equal(t, testVendorMicrosoft, msCategory.Name)
 	assert.EqualValues(t, 1, *msCategory.DocType)
 	assertDefaultBmDocEntity(t, msCategory.bmDocEntity)
 
-	ctsCategory, findCtsCategoryErr := repo.findCategoryByName(logger, "CONTOSO")
+	ctsCategory, findCtsCategoryErr := repo.findCategoryByName(logger, testVendorContoso)
 	require.NoError(t, findCtsCategoryErr)
 	require.EqualValues(t, 12, ctsCategory.ID)
 	assert.NotEmpty(t, ctsCategory.UUID)
-	assert.Equal(t, "CONTOSO", ctsCategory.Name)
+	assert.Equal(t, testVendorContoso, ctsCategory.Name)
 	assert.EqualValues(t, 1, *ctsCategory.DocType)
 	assertDefaultBmDocEntity(t, ctsCategory.bmDocEntity)
 

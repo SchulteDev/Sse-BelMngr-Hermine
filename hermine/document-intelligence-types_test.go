@@ -31,7 +31,7 @@ func Test_diDocument_createComment(t *testing.T) {
 				fieldInvoiceTotal: {Confidence: 0.95},
 			},
 			confidence:     0.95,
-			expectedOutput: "- Test item description\n\nInvoiceTotal confidence: 0.95",
+			expectedOutput: "- Test item description" + prefixInvoiceTotalConfidence + "0.95",
 		},
 		{
 			name: "Multiple items with long description",
@@ -54,7 +54,7 @@ func Test_diDocument_createComment(t *testing.T) {
 			},
 			confidence: 0.85,
 			expectedOutput: "- This description is longer than forty characters\n" +
-				"- Another very long description of an item, product, or whatever\n\nInvoiceTotal confidence: 0.85",
+				"- Another very long description of an item, product, or whatever" + prefixInvoiceTotalConfidence + "0.85",
 		},
 		{
 			name: "Empty items array",
@@ -63,7 +63,7 @@ func Test_diDocument_createComment(t *testing.T) {
 				fieldInvoiceTotal: {Confidence: 1.0},
 			},
 			confidence:     1.0,
-			expectedOutput: "\n\nInvoiceTotal confidence: 1.00",
+			expectedOutput: prefixInvoiceTotalConfidence + "1.00",
 		},
 		{
 			name: "Nil gross confidence",
