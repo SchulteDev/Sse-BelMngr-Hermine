@@ -93,13 +93,24 @@ func (d *diAnalysisStatus) isStatusSucceeded() bool {
 	return d.Status == "succeeded"
 }
 
+const (
+	fieldInvoiceTotal = "InvoiceTotal"
+	fieldVendorName   = "VendorName"
+	fieldCustomerName = "CustomerName"
+	fieldItems        = "Items"
+	fieldDescription  = "Description"
+	fieldInvoiceID    = "InvoiceId"
+	fieldTaxDetails   = "TaxDetails"
+	fieldRate         = "Rate"
+)
+
 func (d *diDocument) createComment() string {
-	items := d.Fields["Items"].ValueArray
+	items := d.Fields[fieldItems].ValueArray
 	itemNamesTextBlock := ""
 	if items != nil {
 		names := make([]string, len(*items))
 		for n, item := range *items {
-			itemDescription := item.ValueObject["Description"].Content
+			itemDescription := item.ValueObject[fieldDescription].Content
 			itemContent := strings.ReplaceAll(itemDescription, "\n", " ")
 			names[n] = "- " + itemContent
 		}
@@ -117,16 +128,16 @@ func (d *diDocument) createComment() string {
 func (d *diDocument) createInvoiceName() string {
 	fields := d.Fields
 
-	vendorName := fields["VendorName"].Content
+	vendorName := fields[fieldVendorName].Content
 	vendorName = strings.ReplaceAll(vendorName, "\n", " ")
 
-	customerName := fields["CustomerName"].Content
+	customerName := fields[fieldCustomerName].Content
 	customerName = strings.ReplaceAll(customerName, "\n", " ")
 
-	items := d.Fields["Items"].ValueArray
+	items := d.Fields[fieldItems].ValueArray
 	if items != nil && len(*items) == 1 {
 		item := (*items)[0]
-		itemDescription := item.ValueObject["Description"].Content
+		itemDescription := item.ValueObject[fieldDescription].Content
 		itemContent := strings.ReplaceAll(itemDescription, "\n", " ")
 		if len(itemContent) > 40 {
 			itemContent = itemContent[:37] + "..."
@@ -134,7 +145,7 @@ func (d *diDocument) createInvoiceName() string {
 		return fmt.Sprintf("%s from %s to %s", itemContent, vendorName, customerName)
 	}
 
-	return fmt.Sprintf("Invoice %s from %s to %s", fields["InvoiceId"].Content, vendorName, customerName)
+	return fmt.Sprintf("Invoice %s from %s to %s", fields[fieldInvoiceID].Content, vendorName, customerName)
 }
 
 func (d *diDocument) getContentFieldCommaSeperated(fieldName string) string {
@@ -147,7 +158,7 @@ func (d *diDocument) getContentFieldCommaSeperated(fieldName string) string {
 
 func (d *diDocument) getGross() *float64 {
 	fields := d.Fields
-	if field, exists := fields["InvoiceTotal"]; exists && field.ValueCurrency != nil {
+	if field, exists := fields[fieldInvoiceTotal]; exists && field.ValueCurrency != nil {
 		return &field.ValueCurrency.Amount
 	}
 
@@ -157,7 +168,7 @@ func (d *diDocument) getGross() *float64 {
 
 func (d *diDocument) getGrossConfidence() *float64 {
 	fields := d.Fields
-	if field, exists := fields["InvoiceTotal"]; exists {
+	if field, exists := fields[fieldInvoiceTotal]; exists {
 		return &field.Confidence
 	}
 
@@ -166,7 +177,7 @@ func (d *diDocument) getGrossConfidence() *float64 {
 }
 
 func (d *diDocument) getVat() *float64 {
-	taxDetails, taxDetailsExists := d.Fields["TaxDetails"]
+	taxDetails, taxDetailsExists := d.Fields[fieldTaxDetails]
 	if !taxDetailsExists || taxDetails.ValueArray == nil {
 		return nil
 	}
@@ -177,7 +188,7 @@ func (d *diDocument) getVat() *float64 {
 	}
 
 	taxDetail := (*taxDetails.ValueArray)[0]
-	taxRateObject := taxDetail.ValueObject["Rate"]
+	taxRateObject := taxDetail.ValueObject[fieldRate]
 	// vatAsStringWithPercentSign example: "19%", "19 %", "19,0%:"
 	vatAsStringWithPercentSign := taxRateObject.Content
 	vatAsString := vatAsStringWithPercentSign
