@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const testBelegName = "Test Beleg"
+
 func TestBelegToCsvLog_NilBelegDate(t *testing.T) {
 	beleg := &bmDocBeleg{
 		bmDocEntity: bmDocEntity{

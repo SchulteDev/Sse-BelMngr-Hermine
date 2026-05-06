@@ -51,13 +51,13 @@ func writeToCsvLog(csvLogFile *os.File, pdds []*processingDoneData) {
 	defer csvLogFileWriter.Flush()
 
 	csvHeaders := []string{
-		headerOriginalPath,
-		headerBelegID,
-		headerBelegName,
-		headerBelegDate,
-		headerInvoiceTotal,
-		headerInvoiceTotalConfidence,
-		headerVatRate,
+		"OriginalPath",
+		"BelegID",
+		"BelegName",
+		"BelegDate",
+		fieldInvoiceTotal,
+		"InvoiceTotalConfidence",
+		"VatRate",
 	}
 	if writeHeadersErr := csvLogFileWriter.Write(csvHeaders); writeHeadersErr != nil {
 		log.WithError(writeHeadersErr).Warn("Failed to write CSV headers")

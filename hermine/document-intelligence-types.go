@@ -93,6 +93,25 @@ func (d *diAnalysisStatus) isStatusSucceeded() bool {
 	return d.Status == "succeeded"
 }
 
+// Document Intelligence Field Names.
+const (
+	fieldInvoiceTotal = "InvoiceTotal"
+	fieldVendorName   = "VendorName"
+	fieldCustomerName = "CustomerName"
+	fieldItems        = "Items"
+	fieldDescription  = "Description"
+	fieldInvoiceID    = "InvoiceId"
+	fieldInvoiceDate  = "InvoiceDate"
+	fieldTaxDetails   = "TaxDetails"
+	fieldRate         = "Rate"
+)
+
+// Formatting constants for Document Intelligence output.
+const (
+	fmtTwoDecimalPlaces          = "%.2f"
+	prefixInvoiceTotalConfidence = "\n\nInvoiceTotal confidence: "
+)
+
 func (d *diDocument) createComment() string {
 	items := d.Fields[fieldItems].ValueArray
 	itemNamesTextBlock := ""
