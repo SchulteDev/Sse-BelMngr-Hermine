@@ -18,9 +18,7 @@ const (
 	documentAnalysisExampleResultFileName = "di_result.json"
 	invoiceExampleFileName                = "Azure DI example english invoice.png"
 	testDataDirectoryName                 = "testdata"
-)
 
-const (
 	testVendorMicrosoft = "MICROSOFT"
 	testVendorContoso   = "CONTOSO"
 	testInvoiceDate     = "2023-01-15"
@@ -33,7 +31,14 @@ func Test_importIntoBelegManager(t *testing.T) {
 	dbSemaphore := make(chan struct{}, 1)
 	testLogger, _ := newDebuggingNullLogger(t)
 	testLoggerEntry := testLogger.WithField("test", t.Name())
-	tempDir := t.TempDir()
+
+	tempDirPath := t.TempDir()
+	tempDir, openTempDirErr := os.Open(tempDirPath)
+	require.NoError(t, openTempDirErr)
+	t.Cleanup(func() {
+		closeErr := tempDir.Close()
+		require.NoError(t, closeErr)
+	})
 
 	database := openDatabaseFixture(t, testLoggerEntry)
 	invoiceAbsFilePath, diAr := getDiResultFixture(t)
@@ -54,15 +59,40 @@ func Test_importIntoBelegManager(t *testing.T) {
 	assertBelegUpdate(t, testLoggerEntry, database, createdBeleg, reimportedBeleg)
 }
 
-func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, tempDir string, importedBeleg *bmDocBeleg, invoiceAbsFilePath string) *bmDocBeleg {
+func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, belegManagerDirectory *os.File, importedBeleg *bmDocBeleg, pathOfFileToImport string) *bmDocBeleg {
 	t.Helper()
 
 	repo := newRepository(db)
+	bmDocAssets, fileInfoForAsset, findAssetErr := repo.findAssets(logger, belegManagerDirectory, pathOfFileToImport)
+	require.NoError(t, findAssetErr)
+	require.Len(t, bmDocAssets, 1)
+	require.NotNil(t, fileInfoForAsset)
+
+	docAsset := bmDocAssets[0]
+	require.EqualValues(t, 1, docAsset.ID)
+	assert.NotEmpty(t, docAsset.UUID)
+	assert.Equal(t, invoiceExampleFileName, docAsset.Name)
+	assert.EqualValues(t, 4, *docAsset.DocType)
+	assert.EqualValues(t, 3, *docAsset.TargetDocType)
+	assert.EqualValues(t, 0, *docAsset.OcrState)
+	assert.Equal(t, invoiceExampleFileName, *docAsset.InternalPath)
+	assert.EqualValues(t, 2, *docAsset.FileSyncState)
+	assertDefaultBmDocEntity(t, docAsset.bmDocEntity)
+
+	originalFileContent, readFileToImportErr := os.ReadFile(pathOfFileToImport)
+	require.NoError(t, readFileToImportErr)
+	finalBelegFile := filepath.Join(belegManagerDirectory.Name(), *docAsset.InternalPath)
+	finalBelegFileContent, readFinalBelegFileErr := os.ReadFile(finalBelegFile)
+	require.NoError(t, readFinalBelegFileErr)
+	require.Len(t, originalFileContent, len(finalBelegFileContent), "The lengths of the files' contents should be equal")
+	assert.Equal(t, originalFileContent, finalBelegFileContent, "The contents of the files should be equal")
+
 	beleg, findBelegErr := repo.findBelegByID(logger, 1)
 	require.NoError(t, findBelegErr)
 	require.EqualValues(t, 1, beleg.ID)
-	assert.Equal(t, importedBeleg.UUID, beleg.UUID)
-	assert.Equal(t, "Microsoft Contoso promotion from MICROSOFT to CONTOSO", beleg.Name)
+	require.Equal(t, importedBeleg, beleg)
+	assert.NotEmpty(t, beleg.UUID)
+	assert.Equal(t, "MICROSOFT AND CONTONSO PARTNERSHIP PR... from CONTOSO to MICROSOFT", beleg.Name)
 	assert.EqualValues(t, 3, *beleg.DocType)
 	assert.Equal(t, "654123", *beleg.Number)
 	assert.InEpsilon(t, 118368, *beleg.Amount, 0)
@@ -96,7 +126,7 @@ func assertBelegCreated(t *testing.T, logger *log.Entry, db *sqlx.DB, tempDir st
 	foundCtsLink := false
 	for _, link := range docLinks {
 		switch link.SourceUUID {
-		case "{35805562-b91c-4384-904d-e99d3752e505}":
+		case docAsset.UUID:
 			foundAssetLink = true
 		case msCategory.UUID:
 			foundMsLink = true
@@ -118,37 +148,59 @@ func assertBelegUpdate(t *testing.T, logger *log.Entry, db *sqlx.DB, belegBefore
 	beleg, findBelegErr := repo.findBelegByID(logger, 1)
 	require.NoError(t, findBelegErr)
 	require.EqualValues(t, 1, beleg.ID)
-	assert.Equal(t, belegBefore.UUID, beleg.UUID)
-	assert.Equal(t, reimportedBeleg.UUID, beleg.UUID)
-	assert.Equal(t, "Microsoft Contoso promotion from MICROSOFT to CONTOSO", beleg.Name)
-
-	assert.NotEqual(t, *belegBefore.TimestampCreated, *beleg.TimestampCreated)
-	assert.Equal(t, *reimportedBeleg.TimestampCreated, *beleg.TimestampCreated)
-}
-
-func openDatabaseFixture(t *testing.T, logger *log.Entry) *sqlx.DB {
-	t.Helper()
-	belegManagerSqLiteDBAbsoluteFilePath := filepath.Join("testdata", belMngrEmptySqLiteDatabaseFileName)
-	db := StartBelegManagerSQLiteDB(belegManagerSqLiteDBAbsoluteFilePath)
-	return db
-}
-
-func getDiResultFixture(t *testing.T) (string, diAnalysisResult) {
-	t.Helper()
-	invoiceAbsFilePath, _ := filepath.Abs(filepath.Join(testDataDirectoryName, invoiceExampleFileName))
-	diResultFilePath, _ := filepath.Abs(filepath.Join(testDataDirectoryName, documentAnalysisExampleResultFileName))
-	diResultFileContent, _ := os.ReadFile(diResultFilePath)
-	var diAr diAnalysisResult
-	_ = json.Unmarshal(diResultFileContent, &diAr)
-	return invoiceAbsFilePath, diAr
+	require.Equal(t, reimportedBeleg, beleg)
+	assertDefaultBmDocEntity(t, beleg.bmDocEntity)
+	assert.NotEqual(t, belegBefore.DocDate, beleg.DocDate)
 }
 
 func assertDefaultBmDocEntity(t *testing.T, e bmDocEntity) {
 	t.Helper()
-	assert.NotEmpty(t, e.UUID)
-	assert.NotEmpty(t, e.TimestampCreated)
+
 	assert.EqualValues(t, 0, *e.DeleteState)
+	assert.NotEmpty(t, *e.DocDate)
+	assert.NotEmpty(t, *e.TimestampCreated)
+	assert.Nil(t, e.Unread)
 	assert.EqualValues(t, 1, *e.Sync)
 	assert.EqualValues(t, 1, *e.NeedUpSync)
 	assert.EqualValues(t, 0, *e.NeedDownSync)
+	assert.Nil(t, e.TimestampLastSync)
+}
+
+func openDatabaseFixture(t *testing.T, logger *log.Entry) *sqlx.DB {
+	t.Helper()
+
+	originalDBPath := filepath.Join(testDataDirectoryName, belMngrEmptySqLiteDatabaseFileName)
+	copiedDBPath := filepath.Join(testDataDirectoryName, fmt.Sprintf("copied_%d_%s", time.Now().UnixNano(), belMngrEmptySqLiteDatabaseFileName))
+	// Backup tool creates a file with a timestamp, but we want a specific name for the test DSN.
+	// Actually Backup tool implementation uses flatDateTime and copyFileToTargetIfTargetDoesNotExist.
+	// Let's just use manual copy for the test to be sure about the path.
+	err := copyFileToTargetIfTargetDoesNotExist(logger, originalDBPath, copiedDBPath)
+	require.NoError(t, err)
+
+	dsn := "file:" + copiedDBPath
+	sqliteDB := sqlx.MustOpen("sqlite", dsn)
+	t.Cleanup(func() {
+		dbCloseErr := sqliteDB.Close()
+		assert.NoError(t, dbCloseErr)
+
+		fileRemoveErr := os.Remove(copiedDBPath)
+		assert.NoError(t, fileRemoveErr)
+	})
+
+	return sqliteDB
+}
+
+func getDiResultFixture(t *testing.T) (string, *diAnalysisStatus) {
+	t.Helper()
+
+	resultFilePath := filepath.Join(testDataDirectoryName, documentAnalysisExampleResultFileName)
+	file, readErr := os.ReadFile(resultFilePath)
+	require.NoError(t, readErr)
+
+	var diAr diAnalysisStatus
+	unmarshalErr := json.Unmarshal(file, &diAr)
+	require.NoError(t, unmarshalErr)
+
+	invoiceFilePath := filepath.Join(testDataDirectoryName, invoiceExampleFileName)
+	return invoiceFilePath, &diAr
 }

@@ -79,13 +79,13 @@ func Test_diDocument_createComment(t *testing.T) {
 				},
 			},
 			confidence:     0.0,
-			expectedOutput: "- Item without confidence\n\nInvoiceTotal confidence: -",
+			expectedOutput: "- Item without confidence" + prefixInvoiceTotalConfidence + "-",
 		},
 		{
 			name:           "Missing Items field",
 			documentFields: map[string]diDocumentField{},
 			confidence:     0.95,
-			expectedOutput: "\n\nInvoiceTotal confidence: -",
+			expectedOutput: prefixInvoiceTotalConfidence + "-",
 		},
 	}
 
