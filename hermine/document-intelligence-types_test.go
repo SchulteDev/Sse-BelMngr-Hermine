@@ -6,6 +6,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const fieldExampleField = "ExampleField"
+
 func Test_diDocument_createComment(t *testing.T) {
 	tests := []struct {
 		name           string
@@ -17,73 +19,73 @@ func Test_diDocument_createComment(t *testing.T) {
 		{
 			name: "Single item with high confidence",
 			documentFields: map[string]diDocumentField{
-				"Items": {
+				fieldItems: {
 					ValueArray: &[]diDocumentFieldItem{
 						{
 							ValueObject: map[string]diDocumentField{
-								"Description": {Content: "Test item description"},
+								fieldDescription: {Content: "Test item description"},
 							},
 						},
 					},
 				},
-				"InvoiceTotal": {Confidence: 0.95},
+				fieldInvoiceTotal: {Confidence: 0.95},
 			},
 			confidence:     0.95,
-			expectedOutput: "- Test item description\n\nInvoiceTotal confidence: 0.95",
+			expectedOutput: "- Test item description" + prefixInvoiceTotalConfidence + "0.95",
 		},
 		{
 			name: "Multiple items with long description",
 			documentFields: map[string]diDocumentField{
-				"Items": {
+				fieldItems: {
 					ValueArray: &[]diDocumentFieldItem{
 						{
 							ValueObject: map[string]diDocumentField{
-								"Description": {Content: "This description is longer than forty characters"},
+								fieldDescription: {Content: "This description is longer than forty characters"},
 							},
 						},
 						{
 							ValueObject: map[string]diDocumentField{
-								"Description": {Content: "Another very long description of an item, product, or whatever"},
+								fieldDescription: {Content: "Another very long description of an item, product, or whatever"},
 							},
 						},
 					},
 				},
-				"InvoiceTotal": {Confidence: 0.85},
+				fieldInvoiceTotal: {Confidence: 0.85},
 			},
 			confidence: 0.85,
 			expectedOutput: "- This description is longer than forty characters\n" +
-				"- Another very long description of an item, product, or whatever\n\nInvoiceTotal confidence: 0.85",
+				"- Another very long description of an item, product, or whatever" + prefixInvoiceTotalConfidence + "0.85",
 		},
 		{
 			name: "Empty items array",
 			documentFields: map[string]diDocumentField{
-				"Items":        {ValueArray: &[]diDocumentFieldItem{}},
-				"InvoiceTotal": {Confidence: 1.0},
+				fieldItems:        {ValueArray: &[]diDocumentFieldItem{}},
+				fieldInvoiceTotal: {Confidence: 1.0},
 			},
 			confidence:     1.0,
-			expectedOutput: "\n\nInvoiceTotal confidence: 1.00",
+			expectedOutput: prefixInvoiceTotalConfidence + "1.00",
 		},
 		{
 			name: "Nil gross confidence",
 			documentFields: map[string]diDocumentField{
-				"Items": {
+				fieldItems: {
 					ValueArray: &[]diDocumentFieldItem{
 						{
 							ValueObject: map[string]diDocumentField{
-								"Description": {Content: "Item without confidence"},
+								fieldDescription: {Content: "Item without confidence"},
 							},
 						},
 					},
 				},
 			},
 			confidence:     0.0,
-			expectedOutput: "- Item without confidence\n\nInvoiceTotal confidence: -",
+			expectedOutput: "- Item without confidence" + prefixInvoiceTotalConfidence + "-",
 		},
 		{
 			name:           "Missing Items field",
 			documentFields: map[string]diDocumentField{},
 			confidence:     0.95,
-			expectedOutput: "\n\nInvoiceTotal confidence: -",
+			expectedOutput: prefixInvoiceTotalConfidence + "-",
 		},
 	}
 
@@ -108,10 +110,10 @@ func Test_diDocument_createInvoiceName(t *testing.T) {
 		{
 			name: "Single item with description",
 			documentFields: map[string]diDocumentField{
-				"VendorName": {Content: "Vendor A"},
-				"Items": {
+				fieldVendorName: {Content: "Vendor A"},
+				fieldItems: {
 					ValueArray: &[]diDocumentFieldItem{
-						{ValueObject: map[string]diDocumentField{"Description": {Content: "Item with short description"}}},
+						{ValueObject: map[string]diDocumentField{fieldDescription: {Content: "Item with short description"}}},
 					},
 				},
 			},
@@ -120,12 +122,12 @@ func Test_diDocument_createInvoiceName(t *testing.T) {
 		{
 			name: "Single item with truncated description",
 			documentFields: map[string]diDocumentField{
-				"VendorName": {Content: "Vendor B"},
-				"Items": {
+				fieldVendorName: {Content: "Vendor B"},
+				fieldItems: {
 					ValueArray: &[]diDocumentFieldItem{
 						{
 							ValueObject: map[string]diDocumentField{
-								"Description": {Content: "Very long description exceeding forty characters for truncation"},
+								fieldDescription: {Content: "Very long description exceeding forty characters for truncation"},
 							},
 						},
 					},
@@ -136,19 +138,19 @@ func Test_diDocument_createInvoiceName(t *testing.T) {
 		{
 			name: "Multiple items",
 			documentFields: map[string]diDocumentField{
-				"VendorName":   {Content: "Vendor C"},
-				"CustomerName": {Content: "Customer X"},
-				"InvoiceId":    {Content: "INV12345"},
-				"Items": {
+				fieldVendorName:   {Content: "Vendor C"},
+				fieldCustomerName: {Content: "Customer X"},
+				fieldInvoiceID:    {Content: "INV12345"},
+				fieldItems: {
 					ValueArray: &[]diDocumentFieldItem{
 						{
 							ValueObject: map[string]diDocumentField{
-								"Description": {Content: "First item"},
+								fieldDescription: {Content: "First item"},
 							},
 						},
 						{
 							ValueObject: map[string]diDocumentField{
-								"Description": {Content: "Second item"},
+								fieldDescription: {Content: "Second item"},
 							},
 						},
 					},
@@ -159,11 +161,11 @@ func Test_diDocument_createInvoiceName(t *testing.T) {
 		{
 			name: "Missing VendorName field",
 			documentFields: map[string]diDocumentField{
-				"Items": {
+				fieldItems: {
 					ValueArray: &[]diDocumentFieldItem{
 						{
 							ValueObject: map[string]diDocumentField{
-								"Description": {Content: "Single item description"},
+								fieldDescription: {Content: "Single item description"},
 							},
 						},
 					},
@@ -174,28 +176,28 @@ func Test_diDocument_createInvoiceName(t *testing.T) {
 		{
 			name: "Empty Items array",
 			documentFields: map[string]diDocumentField{
-				"VendorName":   {Content: "Vendor D"},
-				"CustomerName": {Content: "Customer Y"},
-				"InvoiceId":    {Content: "INV67890"},
-				"Items":        {ValueArray: &[]diDocumentFieldItem{}},
+				fieldVendorName:   {Content: "Vendor D"},
+				fieldCustomerName: {Content: "Customer Y"},
+				fieldInvoiceID:    {Content: "INV67890"},
+				fieldItems:        {ValueArray: &[]diDocumentFieldItem{}},
 			},
 			expectedOutput: "Invoice INV67890 from Vendor D to Customer Y",
 		},
 		{
 			name: "Nil Items array",
 			documentFields: map[string]diDocumentField{
-				"VendorName":   {Content: "Vendor E"},
-				"CustomerName": {Content: "Customer Z"},
-				"InvoiceId":    {Content: "INV99999"},
+				fieldVendorName:   {Content: "Vendor E"},
+				fieldCustomerName: {Content: "Customer Z"},
+				fieldInvoiceID:    {Content: "INV99999"},
 			},
 			expectedOutput: "Invoice INV99999 from Vendor E to Customer Z",
 		},
 		{
 			name: "Missing Items field",
 			documentFields: map[string]diDocumentField{
-				"VendorName":   {Content: "Vendor F"},
-				"CustomerName": {Content: "Customer W"},
-				"InvoiceId":    {Content: "INV00000"},
+				fieldVendorName:   {Content: "Vendor F"},
+				fieldCustomerName: {Content: "Customer W"},
+				fieldInvoiceID:    {Content: "INV00000"},
 			},
 			expectedOutput: "Invoice INV00000 from Vendor F to Customer W",
 		},
@@ -221,33 +223,33 @@ func Test_diDocument_getContentFieldCommaSeperated(t *testing.T) {
 		{
 			name: "Single line content",
 			documentFields: map[string]diDocumentField{
-				"ExampleField": {Content: "Single line data"},
+				fieldExampleField: {Content: "Single line data"},
 			},
-			fieldName:      "ExampleField",
+			fieldName:      fieldExampleField,
 			expectedOutput: "Single line data",
 		},
 		{
 			name: "Multiline content",
 			documentFields: map[string]diDocumentField{
-				"ExampleField": {Content: "Line 1\nLine 2\nLine 3"},
+				fieldExampleField: {Content: "Line 1\nLine 2\nLine 3"},
 			},
-			fieldName:      "ExampleField",
+			fieldName:      fieldExampleField,
 			expectedOutput: "Line 1, Line 2, Line 3",
 		},
 		{
 			name: "Content with trailing newline",
 			documentFields: map[string]diDocumentField{
-				"ExampleField": {Content: "Line 1\n"},
+				fieldExampleField: {Content: "Line 1\n"},
 			},
-			fieldName:      "ExampleField",
+			fieldName:      fieldExampleField,
 			expectedOutput: "Line 1",
 		},
 		{
 			name: "Empty content",
 			documentFields: map[string]diDocumentField{
-				"ExampleField": {Content: ""},
+				fieldExampleField: {Content: ""},
 			},
-			fieldName:      "ExampleField",
+			fieldName:      fieldExampleField,
 			expectedOutput: "",
 		},
 		{
@@ -277,7 +279,7 @@ func Test_diDocument_getGross(t *testing.T) {
 		{
 			name: "Valid gross amount",
 			documentFields: map[string]diDocumentField{
-				"InvoiceTotal": {ValueCurrency: &diCurrency{Amount: 123.45}},
+				fieldInvoiceTotal: {ValueCurrency: &diCurrency{Amount: 123.45}},
 			},
 			expectedGross: func() *float64 { return new(123.45) }(),
 		},
@@ -289,14 +291,14 @@ func Test_diDocument_getGross(t *testing.T) {
 		{
 			name: "InvoiceTotal present with zero amount",
 			documentFields: map[string]diDocumentField{
-				"InvoiceTotal": {ValueCurrency: &diCurrency{Amount: 0.0}},
+				fieldInvoiceTotal: {ValueCurrency: &diCurrency{Amount: 0.0}},
 			},
 			expectedGross: func() *float64 { return new(0.0) }(),
 		},
 		{
 			name: "InvoiceTotal present with nil ValueCurrency",
 			documentFields: map[string]diDocumentField{
-				"InvoiceTotal": {ValueCurrency: nil},
+				fieldInvoiceTotal: {ValueCurrency: nil},
 			},
 			expectedGross: nil,
 		},
@@ -319,7 +321,7 @@ func Test_diDocument_getGrossConfidence(t *testing.T) {
 		{
 			name: "Field exists with confidence",
 			documentFields: map[string]diDocumentField{
-				"InvoiceTotal": {Confidence: 0.85},
+				fieldInvoiceTotal: {Confidence: 0.85},
 			},
 			expectedOutput: func() *float64 { return new(0.85) }(),
 		},
@@ -331,14 +333,14 @@ func Test_diDocument_getGrossConfidence(t *testing.T) {
 		{
 			name: "Field exists with zero confidence",
 			documentFields: map[string]diDocumentField{
-				"InvoiceTotal": {Confidence: 0.0},
+				fieldInvoiceTotal: {Confidence: 0.0},
 			},
 			expectedOutput: func() *float64 { return new(0.0) }(),
 		},
 		{
 			name: "Confidence not set in field",
 			documentFields: map[string]diDocumentField{
-				"InvoiceTotal": {},
+				fieldInvoiceTotal: {},
 			},
 			expectedOutput: func() *float64 { return new(0.0) }(),
 		},
@@ -361,11 +363,11 @@ func Test_diDocument_getVat(t *testing.T) {
 		{
 			name: "Valid VAT field",
 			documentFields: map[string]diDocumentField{
-				"TaxDetails": {
+				fieldTaxDetails: {
 					ValueArray: &[]diDocumentFieldItem{
 						{
 							ValueObject: map[string]diDocumentField{
-								"Rate": {Content: "10%"},
+								fieldRate: {Content: "10%"},
 							},
 						},
 					},
@@ -376,11 +378,11 @@ func Test_diDocument_getVat(t *testing.T) {
 		{
 			name: "Invalid VAT field format",
 			documentFields: map[string]diDocumentField{
-				"TaxDetails": {
+				fieldTaxDetails: {
 					ValueArray: &[]diDocumentFieldItem{
 						{
 							ValueObject: map[string]diDocumentField{
-								"Rate": {Content: "Invalid%"},
+								fieldRate: {Content: "Invalid%"},
 							},
 						},
 					},
@@ -391,16 +393,16 @@ func Test_diDocument_getVat(t *testing.T) {
 		{
 			name: "Multiple TaxDetails entries",
 			documentFields: map[string]diDocumentField{
-				"TaxDetails": {
+				fieldTaxDetails: {
 					ValueArray: &[]diDocumentFieldItem{
 						{
 							ValueObject: map[string]diDocumentField{
-								"Rate": {Content: "10%"},
+								fieldRate: {Content: "10%"},
 							},
 						},
 						{
 							ValueObject: map[string]diDocumentField{
-								"Rate": {Content: "20%"},
+								fieldRate: {Content: "20%"},
 							},
 						},
 					},

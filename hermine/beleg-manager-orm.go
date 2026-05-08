@@ -27,6 +27,11 @@ const (
 	selectBmDocLinkTableByTargetUUIDQuery = "SELECT * FROM BmDoc_LinkTable WHERE targetUuid = ?"
 )
 
+const (
+	logFieldBelegID   = "beleg_id"
+	logFieldBelegName = "beleg_name"
+)
+
 type repository struct {
 	q SqlxExecutor
 }
@@ -141,8 +146,8 @@ func (r *repository) createBelegWithLinkedAsset(logger *log.Entry, belegManagerD
 	}
 
 	logger.
-		WithField("beleg_id", beleg.ID).
-		WithField("beleg_name", beleg.Name).
+		WithField(logFieldBelegID, beleg.ID).
+		WithField(logFieldBelegName, beleg.Name).
 		Info("New Beleg created")
 	return beleg, nil
 }
@@ -151,8 +156,8 @@ func (r *repository) createBeleg(logger *log.Entry, documentFromAnalysis diDocum
 	fields := documentFromAnalysis.Fields
 
 	bmDocUUID := newBmDocUUID()
-	invoiceID := fields["InvoiceId"].Content
-	invoiceDate := fields["InvoiceDate"].ValueDate
+	invoiceID := fields[fieldInvoiceID].Content
+	invoiceDate := fields[fieldInvoiceDate].ValueDate
 	name := documentFromAnalysis.createInvoiceName()
 	now := time.Now().Format(bmDocRFC3339Milli)
 	vat := documentFromAnalysis.getVat()
@@ -176,11 +181,11 @@ func (r *repository) updateBeleg(logger *log.Entry, documentFromAnalysis diDocum
 		logger.WithError(noDocumentFoundError).Warn()
 		return nil, noDocumentFoundError
 	}
-	belegLogger := logger.WithField("beleg_id", beleg.ID).WithField("beleg_name", beleg.Name)
+	belegLogger := logger.WithField(logFieldBelegID, beleg.ID).WithField(logFieldBelegName, beleg.Name)
 
 	fields := documentFromAnalysis.Fields
-	invoiceID := fields["InvoiceId"].Content
-	invoiceDate := fields["InvoiceDate"].ValueDate
+	invoiceID := fields[fieldInvoiceID].Content
+	invoiceDate := fields[fieldInvoiceDate].ValueDate
 	name := documentFromAnalysis.createInvoiceName()
 	now := time.Now().Format(bmDocRFC3339Milli)
 	vat := documentFromAnalysis.getVat()
@@ -254,6 +259,7 @@ func (r *repository) findLinkByAssetAsSource(logger *log.Entry, asset *bmDocAsse
 	if len(result) == 1 {
 		return result[0], nil
 	}
+
 	return nil, nil
 }
 
@@ -329,6 +335,7 @@ func (r *repository) findCategoryByName(logger *log.Entry, categoryName string) 
 	if len(result) == 1 {
 		return result[0], nil
 	}
+
 	return nil, nil
 }
 
