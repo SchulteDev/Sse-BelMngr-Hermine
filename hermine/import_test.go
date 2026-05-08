@@ -27,7 +27,7 @@ const (
 func Test_importIntoBelegManager(t *testing.T) {
 	t.Parallel()
 
-	// given.
+	// given
 	dbSemaphore := make(chan struct{}, 1)
 	testLogger, _ := newDebuggingNullLogger(t)
 	testLoggerEntry := testLogger.WithField("test", t.Name())
@@ -43,19 +43,19 @@ func Test_importIntoBelegManager(t *testing.T) {
 	database := openDatabaseFixture(t, testLoggerEntry)
 	invoiceAbsFilePath, diAr := getDiResultFixture(t)
 
-	// when.
+	// when
 	importedBeleg, importErrInsert := importIntoBelegManager(testLoggerEntry, database, dbSemaphore, tempDir, invoiceAbsFilePath, diAr.AnalyzeResult.Documents[0])
 	require.NoError(t, importErrInsert)
 
-	// then.
+	// then
 	createdBeleg := assertBelegCreated(t, testLoggerEntry, database, tempDir, importedBeleg, invoiceAbsFilePath)
 
-	// when.
+	// when
 	time.Sleep(1 * time.Second)
 	reimportedBeleg, importErrUpdate := importIntoBelegManager(testLoggerEntry, database, dbSemaphore, tempDir, invoiceAbsFilePath, diAr.AnalyzeResult.Documents[0])
 	require.NoError(t, importErrUpdate)
 
-	// then.
+	// then
 	assertBelegUpdate(t, testLoggerEntry, database, createdBeleg, reimportedBeleg)
 }
 
@@ -170,12 +170,9 @@ func openDatabaseFixture(t *testing.T, logger *log.Entry) *sqlx.DB {
 	t.Helper()
 
 	originalDBPath := filepath.Join(testDataDirectoryName, belMngrEmptySqLiteDatabaseFileName)
-	copiedDBPath := filepath.Join(testDataDirectoryName, fmt.Sprintf("copied_%d_%s", time.Now().UnixNano(), belMngrEmptySqLiteDatabaseFileName))
-	// Backup tool creates a file with a timestamp, but we want a specific name for the test DSN.
-	// Actually Backup tool implementation uses flatDateTime and copyFileToTargetIfTargetDoesNotExist.
-	// Let's just use manual copy for the test to be sure about the path.
-	err := copyFileToTargetIfTargetDoesNotExist(logger, originalDBPath, copiedDBPath)
-	require.NoError(t, err)
+	copiedDBPath := filepath.Join(testDataDirectoryName, fmt.Sprintf("copied_%s_%s", time.Now().Format(flatDateTime), belMngrEmptySqLiteDatabaseFileName))
+	backupErr := copyFileToTargetIfTargetDoesNotExist(logger, originalDBPath, copiedDBPath)
+	require.NoError(t, backupErr)
 
 	dsn := "file:" + copiedDBPath
 	sqliteDB := sqlx.MustOpen("sqlite", dsn)

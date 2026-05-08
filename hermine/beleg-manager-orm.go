@@ -113,23 +113,6 @@ func (r *repository) linkCategoryToBeleg(logger *log.Entry, analysedDocument diD
 	return nil
 }
 
-func (r *repository) findOrCreateCategory(logger *log.Entry, documentFromAnalysis diDocument, fieldName string) (*bmDocCategory, error) {
-	categoryName := documentFromAnalysis.getContentFieldCommaSeperated(fieldName)
-	cat, findErr := r.findCategoryByName(logger, categoryName)
-	if findErr != nil {
-		return nil, findErr
-	}
-	if cat != nil {
-		return cat, nil
-	}
-
-	if createErr := r.createCategory(logger, documentFromAnalysis, fieldName); createErr != nil {
-		return nil, createErr
-	}
-
-	return r.findCategoryByName(logger, categoryName)
-}
-
 func (r *repository) createBelegWithLinkedAsset(logger *log.Entry, belegManagerDirectory *os.File, pathOfFileToImport string, documentFromAnalysis diDocument) (*bmDocBeleg, error) {
 	internalFileToImportPath, createCopyErr := copyFileIntoDirectoryIfTargetDoesNotExist(logger, pathOfFileToImport, belegManagerDirectory.Name())
 	if createCopyErr != nil {
@@ -228,24 +211,6 @@ func (r *repository) updateBeleg(logger *log.Entry, documentFromAnalysis diDocum
 	return updatedBeleg, nil
 }
 
-func (r *repository) createOrUpdateBeleg(logger *log.Entry, belegManagerDirectory *os.File, pathOfFileToImport string, documentFromAnalysis diDocument) (*bmDocBeleg, error) {
-	bmDocAssets, fileStatInfo, err := r.findAssets(logger, belegManagerDirectory, pathOfFileToImport)
-	if err != nil {
-		return nil, err
-	}
-
-	if fileStatInfo == nil {
-		return r.createBelegWithLinkedAsset(logger, belegManagerDirectory, pathOfFileToImport, documentFromAnalysis)
-	}
-
-	if len(bmDocAssets) == 0 {
-		return r.createBelegWithLinkedAsset(logger, belegManagerDirectory, pathOfFileToImport, documentFromAnalysis)
-	}
-
-	// For now just update the first one found.
-	return r.updateBeleg(logger, documentFromAnalysis, bmDocAssets[0])
-}
-
 func (r *repository) findBelegByID(logger *log.Entry, id uint32) (*bmDocBeleg, error) {
 	doc := bmDocBeleg{}
 	if err := r.q.Get(&doc, selectBmDocBelegByIDQuery, id); err != nil {
@@ -333,6 +298,23 @@ func (r *repository) findAssetByID(logger *log.Entry, id int64) (*bmDocAsset, er
 	return &asset, nil
 }
 
+func (r *repository) findOrCreateCategory(logger *log.Entry, documentFromAnalysis diDocument, fieldName string) (*bmDocCategory, error) {
+	categoryName := documentFromAnalysis.getContentFieldCommaSeperated(fieldName)
+	cat, findErr := r.findCategoryByName(logger, categoryName)
+	if findErr != nil {
+		return nil, findErr
+	}
+	if cat != nil {
+		return cat, nil
+	}
+
+	if createErr := r.createCategory(logger, documentFromAnalysis, fieldName); createErr != nil {
+		return nil, createErr
+	}
+
+	return r.findCategoryByName(logger, categoryName)
+}
+
 func (r *repository) findCategoryByName(logger *log.Entry, categoryName string) (*bmDocCategory, error) {
 	result := make([]*bmDocCategory, 0)
 	if err := r.q.Select(&result, selectBmDocCategoryByNameQuery, categoryName); err != nil {
@@ -355,4 +337,22 @@ func (r *repository) findCategoryByName(logger *log.Entry, categoryName string) 
 	}
 
 	return nil, nil
+}
+
+func (r *repository) createOrUpdateBeleg(logger *log.Entry, belegManagerDirectory *os.File, pathOfFileToImport string, documentFromAnalysis diDocument) (*bmDocBeleg, error) {
+	bmDocAssets, fileStatInfo, err := r.findAssets(logger, belegManagerDirectory, pathOfFileToImport)
+	if err != nil {
+		return nil, err
+	}
+
+	if fileStatInfo == nil {
+		return r.createBelegWithLinkedAsset(logger, belegManagerDirectory, pathOfFileToImport, documentFromAnalysis)
+	}
+
+	if len(bmDocAssets) == 0 {
+		return r.createBelegWithLinkedAsset(logger, belegManagerDirectory, pathOfFileToImport, documentFromAnalysis)
+	}
+
+	// For now just update the first one found.
+	return r.updateBeleg(logger, documentFromAnalysis, bmDocAssets[0])
 }

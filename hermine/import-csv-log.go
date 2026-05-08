@@ -99,7 +99,7 @@ func diDocumentToCsvLog(d *diDocument) []string {
 
 func convertFloatPointerToString(value *float64) string {
 	if value != nil {
-		return fmt.Sprintf(fmtTwoDecimalPlaces, *value)
+		return fmt.Sprintf("%.2f", *value)
 	}
 
 	return ""

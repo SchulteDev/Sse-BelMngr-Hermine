@@ -108,7 +108,6 @@ const (
 
 // Formatting constants for Document Intelligence output.
 const (
-	fmtTwoDecimalPlaces          = "%.2f"
 	prefixInvoiceTotalConfidence = "\n\nInvoiceTotal confidence: "
 )
 
@@ -127,7 +126,7 @@ func (d *diDocument) createComment() string {
 
 	confidenceText := "-"
 	if grossConfidence := d.getGrossConfidence(); grossConfidence != nil {
-		confidenceText = fmt.Sprintf(fmtTwoDecimalPlaces, *grossConfidence)
+		confidenceText = fmt.Sprintf("%.2f", *grossConfidence)
 	}
 
 	return fmt.Sprintf("%s"+prefixInvoiceTotalConfidence+"%s", itemNamesTextBlock, confidenceText)
