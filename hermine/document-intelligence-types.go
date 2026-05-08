@@ -11,6 +11,24 @@ import (
 
 const documentTypeInvoice = "invoice"
 
+// Document Intelligence Field Names.
+const (
+	fieldInvoiceTotal = "InvoiceTotal"
+	fieldVendorName   = "VendorName"
+	fieldCustomerName = "CustomerName"
+	fieldItems        = "Items"
+	fieldDescription  = "Description"
+	fieldInvoiceID    = "InvoiceId"
+	fieldInvoiceDate  = "InvoiceDate"
+	fieldTaxDetails   = "TaxDetails"
+	fieldRate         = "Rate"
+)
+
+// Formatting constants for Document Intelligence output.
+const (
+	prefixInvoiceTotalConfidence = "\n\nInvoiceTotal confidence: "
+)
+
 type diAnalysisStatus struct {
 	Status              string           `json:"status"`
 	CreatedDateTime     time.Time        `json:"createdDateTime"`
@@ -92,24 +110,6 @@ func (d *diAnalysisStatus) isStatusRunning() bool {
 func (d *diAnalysisStatus) isStatusSucceeded() bool {
 	return d.Status == "succeeded"
 }
-
-// Document Intelligence Field Names.
-const (
-	fieldInvoiceTotal = "InvoiceTotal"
-	fieldVendorName   = "VendorName"
-	fieldCustomerName = "CustomerName"
-	fieldItems        = "Items"
-	fieldDescription  = "Description"
-	fieldInvoiceID    = "InvoiceId"
-	fieldInvoiceDate  = "InvoiceDate"
-	fieldTaxDetails   = "TaxDetails"
-	fieldRate         = "Rate"
-)
-
-// Formatting constants for Document Intelligence output.
-const (
-	prefixInvoiceTotalConfidence = "\n\nInvoiceTotal confidence: "
-)
 
 func (d *diDocument) createComment() string {
 	items := d.Fields[fieldItems].ValueArray
