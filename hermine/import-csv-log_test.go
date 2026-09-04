@@ -11,10 +11,8 @@ const testBelegName = "Test Beleg"
 
 func TestBelegToCsvLog_NilBelegDate(t *testing.T) {
 	beleg := &bmDocBeleg{
-		bmDocEntity: bmDocEntity{
-			ID:   123,
-			Name: testBelegName,
-		},
+		ID:        123,
+		Name:      testBelegName,
 		BelegDate: nil, // This should trigger the panic if not handled.
 		Amount:    new(12.34),
 	}
@@ -29,10 +27,8 @@ func TestToCsvLogRow_Consistency(t *testing.T) {
 	pdd := &processingDoneData{
 		pathOfFileToImport: "C:/test.pdf",
 		beleg: &bmDocBeleg{
-			bmDocEntity: bmDocEntity{
-				ID:   123,
-				Name: testBelegName,
-			},
+			ID:        123,
+			Name:      testBelegName,
 			BelegDate: new("2025-01-01"),
 			Amount:    new(12.34),
 		},
